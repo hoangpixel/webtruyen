@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" data-bs-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đăng Ký - Tàng Kinh Các</title>
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    
+    <style>
+        body {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, rgba(33,37,41,1) 0%, rgba(18,18,18,1) 100%);
+            padding: 20px 0; /* Thêm padding để trên mobile cuộn được */
+        }
+        [data-bs-theme="light"] body {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        }
+        .register-card {
+            width: 100%;
+            max-width: 450px;
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        .text-hot { color: #ff5722; }
+        .btn-hot { background-color: #ff5722; color: white; border: none; transition: 0.3s; }
+        .btn-hot:hover { background-color: #e64a19; transform: translateY(-2px); }
+    </style>
+</head>
+<body>
+
+    <button class="btn position-absolute top-0 end-0 m-3" id="btn-theme-toggle" style="font-size: 1.5rem; border: none;">
+        <i class="bi bi-moon-stars-fill text-warning" id="icon-theme"></i>
+    </button>
+
+    <div class="card register-card bg-body-tertiary p-4">
+        <div class="text-center mb-4">
+            <h3 class="text-hot fw-bold"><i class="bi bi-person-plus-fill"></i> ĐĂNG KÝ TÀI KHOẢN</h3>
+            <p class="text-muted">Gia nhập Tàng Kinh Các ngay hôm nay!</p>
+        </div>
+        
+        <!-- Mốt ráp Controller thì trỏ action về /user/dang-ky nha -->
+        <form th:action="@{/xu-ly-dang-ky}" method="POST">
+            
+            <div class="mb-3">
+                <label class="form-label fw-bold">Họ và tên</label>
+                <div class="input-group">
+                    <span class="input-group-text"><i class="bi bi-person-badge"></i></span>
+                    <input type="text" name="hoTen" class="form-control" placeholder="Ví dụ: Phạm Minh Hoàng" required>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label fw-bold">Email</label>
+                <div class="input-group">
+                    <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+                    <input type="email" name="email" class="form-control" placeholder="Nhập địa chỉ email..." required>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label fw-bold">Tên đăng nhập</label>
+                <div class="input-group">
+                    <span class="input-group-text"><i class="bi bi-person"></i></span>
+                    <input type="text" name="username" class="form-control" placeholder="Tên dùng để đăng nhập..." required>
+                </div>
+            </div>
+            
+            <div class="mb-3">
+                <label class="form-label fw-bold">Mật khẩu</label>
+                <div class="input-group">
+                    <span class="input-group-text"><i class="bi bi-lock"></i></span>
+                    <input type="password" name="password" class="form-control" placeholder="Nhập mật khẩu..." required>
+                </div>
+            </div>
+
+            <div class="mb-4">
+                <label class="form-label fw-bold">Nhập lại mật khẩu</label>
+                <div class="input-group">
+                    <span class="input-group-text"><i class="bi bi-shield-lock"></i></span>
+                    <input type="password" name="confirmPassword" class="form-control" placeholder="Xác nhận lại mật khẩu..." required>
+                </div>
+            </div>
+
+            <!-- Khung báo lỗi nếu bị trùng tài khoản hoặc sai mật khẩu nhập lại -->
+            <div th:if="${loiDangKy}" class="alert alert-danger py-2 text-center fw-bold" role="alert" th:text="${loiDangKy}"></div>
+
+            <button type="submit" class="btn btn-hot w-100 fw-bold py-2 mb-3">TẠO TÀI KHOẢN</button>
+            
+            <div class="text-center">
+                <span class="text-muted">Đã có tài khoản? </span>
+                <a th:href="@{/login-user}" class="text-decoration-none text-hot fw-bold">Đăng nhập</a>
+            </div>
+        </form>
+    </div>
+
+    <!-- Script Bootstrap & Đổi Màu -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script th:src="@{/user/js/doi_mau.js}"></script>
+</body>
+</html>

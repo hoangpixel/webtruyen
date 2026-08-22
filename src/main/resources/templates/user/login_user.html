@@ -49,12 +49,12 @@
             <p class="text-muted">Đăng nhập để lưu truyện và bình luận</p>
         </div>
         
-        <form>
+        <form th:action="@{/user/login}" method="POST">
             <div class="mb-3">
                 <label class="form-label fw-bold">Tên đăng nhập</label>
                 <div class="input-group">
                     <span class="input-group-text"><i class="bi bi-person"></i></span>
-                    <input type="text" class="form-control" placeholder="Nhập tài khoản của bạn...">
+                    <input type="text" name="username" class="form-control" placeholder="Nhập tài khoản của bạn...">
                 </div>
             </div>
             
@@ -62,16 +62,16 @@
                 <label class="form-label fw-bold">Mật khẩu</label>
                 <div class="input-group">
                     <span class="input-group-text"><i class="bi bi-lock"></i></span>
-                    <input type="password" class="form-control" placeholder="Nhập mật khẩu...">
+                    <input type="password" name="password" class="form-control" placeholder="Nhập mật khẩu...">
                 </div>
             </div>
-            
-            <!-- Tạm thời gán sự kiện click để nhảy về trang chủ test giao diện -->
-            <button type="button" class="btn btn-hot w-100 fw-bold py-2 mb-3" onclick="window.location.href='/index.html'">ĐĂNG NHẬP</button>
+
+            <div th:if="${loi}" class="alert alert-danger py-2 text-center fw-bold" role="alert" th:text="${loi}"></div>
+            <button type="submit" class="btn btn-hot w-100 fw-bold py-2 mb-3">ĐĂNG NHẬP</button>
             
             <div class="text-center">
                 <span class="text-muted">Chưa có tài khoản? </span>
-                <a href="#" class="text-decoration-none text-hot fw-bold">Đăng ký ngay</a>
+                <a th:href="@{/dang-ky}" class="text-decoration-none text-hot fw-bold">Đăng ký ngay</a>
             </div>
         </form>
     </div>

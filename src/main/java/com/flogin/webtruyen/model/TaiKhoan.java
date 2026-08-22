@@ -14,4 +14,8 @@ public class TaiKhoan {
     private String username;
     private String password;
     private String vaiTro;
+
+    private String email;
+    private String hoTen;
+    private String avatar;
 }

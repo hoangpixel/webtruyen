@@ -16,6 +16,10 @@
         .card:hover { transform: translateY(-5px); box-shadow: 0 4px 15px rgba(255, 87, 34, 0.4); }
         .truyen-bia { height: 250px; object-fit: cover; }
         .text-hot { color: #ff5722; font-weight: bold; }
+        .dropdown:hover .dropdown-menu {
+            display: block;
+            margin-top: 0;
+        }
     </style>
 </head>
 <body>
@@ -35,9 +39,38 @@
                     <button class="btn btn-outline-warning" type="submit"><i class="bi bi-search"></i></button>
                 </form>
                 <ul class="navbar-nav align-items-center">
-                    <li class="nav-item">
-                        <a class="btn btn-danger text-white px-3 me-2" href="/user/login_user.html">Đăng Nhập</a>
+                    <li class="nav-item" th:if="${session.nguoiDung == null}">
+                        <a class="btn btn-danger text-white px-3 me-2" th:href="@{/login-user}">Đăng Nhập</a>
                     </li>
+
+                    <li class="nav-item dropdown ms-3" th:if="${session.nguoiDung != null}">
+                        <a class="nav-link text-info fw-bold d-flex align-items-center" href="#" role="button">
+                            <!-- Sau này chỗ này load ảnh avatar thật của user lên -->
+                            <img src="https://via.placeholder.com/30" class="rounded-circle me-2" alt="Avatar"> 
+                            <span th:text="${session.nguoiDung}"></span>
+                        </a>
+                        <!-- Khung Menu xổ xuống -->
+                        <ul class="dropdown-menu dropdown-menu-end shadow border-0" style="background-color: var(--bs-body-bg);">
+                            <li>
+                                <a class="dropdown-item py-2" th:href="@{/chi-tiet-user}">
+                                    <i class="bi bi-person-lines-fill text-primary me-2"></i> Thông tin cá nhân
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item py-2" th:href="@{/user/list_yeu_thich.html}">
+                                    <i class="bi bi-heart-fill text-danger me-2"></i> Tủ truyện của tôi
+                                </a>
+                            </li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li>
+                                <!-- Nhớ mốt làm cái GetMapping "/logout" bên Controller để xóa session nha -->
+                                <a class="dropdown-item py-2 text-danger fw-bold" th:href="@{/logout}">
+                                    <i class="bi bi-box-arrow-right me-2"></i> Đăng xuất
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                    
                     <!-- Nút Đổi Theme (Sáng/Tối) -->
                     <li class="nav-item">
                         <button class="btn" id="btn-theme-toggle" style="border: none; font-size: 1.2rem;">
