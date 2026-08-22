@@ -18,10 +18,11 @@ public class Truyen {
     @Column(columnDefinition = "TEXT")
     private String moTa;
     private String anhBia;
-    private String trangThai; // "Đang ra", "Hoàn thành"
+    private String trangThai;
 
     private double diemTrungBinh;
     private int tongSoDanhGia;
+    private int luotXem;
 
     // Quan hệ Nhiều-Nhiều với Thể Loại (Sinh ra bảng phụ truyen_the_loai)
     @ManyToMany

@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<!-- Thêm data-bs-theme="dark" để mặc định mở lên là ban đêm -->
+<html xmlns:th="http://www.thymeleaf.org" data-bs-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trang Chủ - Web Đọc Truyện</title>
+    <!-- Bootstrap 5.3 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    
+    <style>
+        /* CSS giờ cực mỏng nhẹ vì Bootstrap lo hết màu sắc rồi */
+        .card { transition: 0.3s; border: none; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .card:hover { transform: translateY(-5px); box-shadow: 0 4px 15px rgba(255, 87, 34, 0.4); }
+        .truyen-bia { height: 250px; object-fit: cover; }
+        .text-hot { color: #ff5722; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+    <!-- THANH ĐIỀU HƯỚNG -->
+    <!-- Bỏ bg-dark đi để nó tự động đổi màu theo theme -->
+    <nav class="navbar navbar-expand-lg sticky-top shadow-sm" style="background-color: var(--bs-body-bg);">
+        <div class="container">
+            <a class="navbar-brand text-hot" href="#"><i class="bi bi-book-half"></i> Tàng Kinh Các</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <form class="d-flex mx-auto w-50">
+                    <input class="form-control me-2" type="search" placeholder="Nhập tên truyện, tác giả...">
+                    <button class="btn btn-outline-warning" type="submit"><i class="bi bi-search"></i></button>
+                </form>
+                <ul class="navbar-nav align-items-center">
+                    <li class="nav-item">
+                        <a class="btn btn-danger text-white px-3 me-2" href="/user/login_user.html">Đăng Nhập</a>
+                    </li>
+                    <!-- Nút Đổi Theme (Sáng/Tối) -->
+                    <li class="nav-item">
+                        <button class="btn" id="btn-theme-toggle" style="border: none; font-size: 1.2rem;">
+                            <i class="bi bi-moon-stars-fill text-warning" id="icon-theme"></i>
+                        </button>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- KHOẢNG TRỐNG NỘI DUNG CHÍNH -->
+    <div class="container mt-4">
+        
+        <!-- KHU VỰC TRUYỆN ĐỀ CỬ -->
+        <h4 class="text-hot mb-3"><i class="bi bi-fire"></i> Truyện Đề Cử</h4>
+        <div class="row mb-5">
+            <div class="col-6 col-md-3 mb-3">
+                <!-- Chú ý tui xài class h-100 để các card bằng nhau -->
+                <div class="card h-100 bg-body-tertiary">
+                    <img src="https://via.placeholder.com/300x400" class="card-img-top truyen-bia" alt="Bìa truyện">
+                    <div class="card-body p-2 text-center">
+                        <h6 class="card-title mb-1 text-truncate">Ta Là Tà Đế</h6>
+                        <small class="text-muted"><i class="bi bi-eye"></i> 1.2M Lượt xem</small>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-6 col-md-3 mb-3">
+                <div class="card h-100 bg-body-tertiary">
+                    <img src="https://via.placeholder.com/300x400" class="card-img-top truyen-bia" alt="Bìa truyện">
+                    <div class="card-body p-2 text-center">
+                        <h6 class="card-title mb-1 text-truncate">Võ Luyện Đỉnh Phong</h6>
+                        <small class="text-muted"><i class="bi bi-eye"></i> 900K Lượt xem</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- KHU VỰC MỚI CẬP NHẬT -->
+        <h4 class="text-warning mb-3"><i class="bi bi-clock-history"></i> Mới Cập Nhật</h4>
+        <div class="row">
+            <div class="col-6 col-md-2 mb-4">
+                <div class="card h-100 bg-body-tertiary">
+                    <img src="https://via.placeholder.com/200x300" class="card-img-top truyen-bia" style="height: 180px;" alt="Bìa truyện">
+                    <div class="card-body p-2">
+                        <h6 class="card-title text-truncate" style="font-size: 14px;">Đấu Phá Thương Khung</h6>
+                        <span class="badge bg-danger">Chapter 350</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    
+    <script th:src="@{/user/js/doi_mau.js}"></script>
+</body>
+</html>

@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" data-bs-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tìm Kiếm Nâng Cao - Tàng Kinh Các</title>
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    
+    <style>
+        .truyen-bia { height: 250px; object-fit: cover; border-radius: 5px; }
+        .text-hot { color: #ff5722; font-weight: bold; }
+        .card-truyen { transition: 0.3s; border: none; }
+        .card-truyen:hover { transform: translateY(-5px); box-shadow: 0 4px 15px rgba(255, 87, 34, 0.4); }
+    </style>
+</head>
+<body>
+
+    <!-- THANH ĐIỀU HƯỚNG -->
+    <nav class="navbar navbar-expand-lg sticky-top shadow-sm" style="background-color: var(--bs-body-bg);">
+        <div class="container">
+            <a class="navbar-brand text-hot" href="/index.html"><i class="bi bi-book-half"></i> Tàng Kinh Các</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto align-items-center">
+                    <li class="nav-item">
+                        <button class="btn" id="btn-theme-toggle" style="border: none; font-size: 1.2rem;">
+                            <i class="bi bi-moon-stars-fill text-warning" id="icon-theme"></i>
+                        </button>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- NỘI DUNG CHÍNH -->
+    <div class="container mt-4">
+        <h3 class="text-hot mb-4"><i class="bi bi-search"></i> Tìm Kiếm Nâng Cao</h3>
+
+        <!-- BỘ LỌC TÌM KIẾM -->
+        <div class="card bg-body-tertiary shadow-sm mb-5 border-0">
+            <div class="card-body">
+                <form action="/tim-kiem" method="GET">
+                    <div class="row mb-3">
+                        <div class="col-md-6 mb-3 mb-md-0">
+                            <label class="form-label fw-bold">Tên truyện</label>
+                            <input type="text" class="form-control" name="tenTruyen" placeholder="Nhập từ khóa tên truyện...">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Tác giả</label>
+                            <input type="text" class="form-control" name="tacGia" placeholder="Nhập tên tác giả...">
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label fw-bold">Thể loại (Có thể chọn nhiều)</label>
+                        <!-- Danh sách thể loại dạng nút bấm -->
+                        <div class="d-flex flex-wrap gap-2">
+                            <!-- Bùa btn-check biến checkbox thành nút bấm -->
+                            <input type="checkbox" class="btn-check" id="tl1" name="theLoai" value="1">
+                            <label class="btn btn-outline-warning btn-sm px-3" for="tl1">Tiên Hiệp</label>
+
+                            <input type="checkbox" class="btn-check" id="tl2" name="theLoai" value="2">
+                            <label class="btn btn-outline-warning btn-sm px-3" for="tl2">Kiếm Hiệp</label>
+
+                            <input type="checkbox" class="btn-check" id="tl3" name="theLoai" value="3">
+                            <label class="btn btn-outline-warning btn-sm px-3" for="tl3">Xuyên Không</label>
+
+                            <input type="checkbox" class="btn-check" id="tl4" name="theLoai" value="4">
+                            <label class="btn btn-outline-warning btn-sm px-3" for="tl4">Hài Hước</label>
+
+                            <input type="checkbox" class="btn-check" id="tl5" name="theLoai" value="5">
+                            <label class="btn btn-outline-warning btn-sm px-3" for="tl5">Hệ Thống</label>
+                            
+                            <input type="checkbox" class="btn-check" id="tl6" name="theLoai" value="6">
+                            <label class="btn btn-outline-warning btn-sm px-3" for="tl6">Đô Thị</label>
+                        </div>
+                    </div>
+
+                    <div class="text-center">
+                        <button type="submit" class="btn btn-danger px-5 fw-bold"><i class="bi bi-funnel-fill"></i> LỌC TRUYỆN</button>
+                        <button type="reset" class="btn btn-secondary px-4 ms-2">Làm mới</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- KẾT QUẢ TÌM KIẾM -->
+        <h5 class="mb-3 fw-bold border-bottom pb-2">Kết quả tìm kiếm (2)</h5>
+        <div class="row">
+            <!-- Dummy Data Kết quả 1 -->
+            <div class="col-6 col-md-3 mb-4">
+                <div class="card card-truyen h-100 bg-body-tertiary">
+                    <img src="https://via.placeholder.com/300x400" class="card-img-top truyen-bia" alt="Bìa truyện">
+                    <div class="card-body p-2 text-center">
+                        <h6 class="card-title text-truncate mb-1">Ta Là Tà Đế</h6>
+                        <small class="text-muted">Chương 105</small>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Dummy Data Kết quả 2 -->
+            <div class="col-6 col-md-3 mb-4">
+                <div class="card card-truyen h-100 bg-body-tertiary">
+                    <img src="https://via.placeholder.com/300x400" class="card-img-top truyen-bia" alt="Bìa truyện">
+                    <div class="card-body p-2 text-center">
+                        <h6 class="card-title text-truncate mb-1">Hệ Thống Khóc Nhè</h6>
+                        <small class="text-muted">Chương 50</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script th:src="@{/user/js/doi_mau.js}"></script>
+</body>
+</html>
