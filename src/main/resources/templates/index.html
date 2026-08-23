@@ -46,7 +46,7 @@
                     <li class="nav-item dropdown ms-3" th:if="${session.nguoiDung != null}">
                         <a class="nav-link text-info fw-bold d-flex align-items-center" href="#" role="button">
                             <!-- Sau này chỗ này load ảnh avatar thật của user lên -->
-                            <img src="https://via.placeholder.com/30" class="rounded-circle me-2" alt="Avatar"> 
+                            <img th:src="@{'/images/' + ${session.avatar}}" class="rounded-circle me-2" alt="Avatar" style="width: 35px; height: 35px; object-fit: cover;"> 
                             <span th:text="${session.nguoiDung}"></span>
                         </a>
                         <!-- Khung Menu xổ xuống -->
@@ -110,18 +110,24 @@
             </div>
         </div>
 
-        <!-- KHU VỰC MỚI CẬP NHẬT -->
+<!-- KHU VỰC MỚI CẬP NHẬT -->
         <h4 class="text-warning mb-3"><i class="bi bi-clock-history"></i> Mới Cập Nhật</h4>
         <div class="row">
+            
+            <!-- Thẻ truyện mẫu số 1 -->
             <div class="col-6 col-md-2 mb-4">
-                <div class="card h-100 bg-body-tertiary">
+                <a th:href="">
+                    <div class="card h-100 bg-body-tertiary">
                     <img src="https://via.placeholder.com/200x300" class="card-img-top truyen-bia" style="height: 180px;" alt="Bìa truyện">
                     <div class="card-body p-2">
-                        <h6 class="card-title text-truncate" style="font-size: 14px;">Đấu Phá Thương Khung</h6>
+                        <h6 class="card-title text-truncate" style="font-size: 14px;" title="Đấu Phá Thương Khung">Đấu Phá Thương Khung</h6>
                         <span class="badge bg-danger">Chapter 350</span>
                     </div>
                 </div>
+                </a>
             </div>
+
+
         </div>
     </div>
 

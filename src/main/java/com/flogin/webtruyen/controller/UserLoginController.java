@@ -36,6 +36,7 @@ public class UserLoginController {
             TaiKhoan tk = bus.layTaiKhoan(username, password);
             session.setAttribute("nguoiDung", tk.getUsername());
             session.setAttribute("vaiTro", tk.getVaiTro());
+            session.setAttribute("avatar", tk.getAvatar());
             return "redirect:/";
         }
         model.addAttribute("loi", "Sai tài khoản hoặc mật khẩu!");

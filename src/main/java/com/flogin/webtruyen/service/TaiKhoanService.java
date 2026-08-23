@@ -57,9 +57,39 @@ public class TaiKhoanService {
         {
             String hashedPass = maHoaMatKhau(tk.getPassword());
             tk.setPassword(hashedPass);
+            tk.setAvatar("default.jpg");
             repo.save(tk);
             return true;
         }
         return false;
+    }
+
+    public boolean capNhatTaiKhoan(TaiKhoan tk)
+    {
+        TaiKhoan tkSua = repo.findById(tk.getId()).orElse(null);
+        if(tkSua != null)
+        {
+            tkSua.setHoTen(tk.getHoTen());
+            tkSua.setEmail(tk.getEmail());
+            
+            if(tk.getAvatar() != null && !tk.getAvatar().isBlank())
+            {
+                tkSua.setAvatar(tk.getAvatar());
+            }
+
+            if(tk.getPassword() != null && !tk.getPassword().isBlank())
+            {
+                String hasedPass = maHoaMatKhau(tk.getPassword());
+                tkSua.setPassword(hasedPass);
+            }
+            repo.save(tkSua);
+            return true;
+        }
+        return false;
+    }
+
+    public TaiKhoan layThongTinTaiKhoan(String username)
+    {
+        return repo.findByUsername(username);
     }
 }
