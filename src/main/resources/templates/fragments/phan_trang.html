@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+
+    <!-- Mảnh ghép phân trang: <<  <  [ input ] / tổng  >  >> -->
+    <div th:fragment="phantrang(duongDan, trangHienTai, tongSoTrang)" class="d-flex justify-content-center mt-4 mb-5">
+        <nav aria-label="Page navigation">
+            <ul class="pagination shadow-sm align-items-center mb-0">
+                
+                <!-- Nút << Về trang đầu -->
+                <li class="page-item" th:classappend="${(trangHienTai ?: 1) <= 1 ? 'disabled' : ''}">
+                    <a class="page-link text-warning" th:href="@{|${duongDan}/1|}" title="Trang đầu">
+                        <i class="bi bi-chevron-bar-left"></i>
+                    </a>
+                </li>
+
+                <!-- Nút < Lùi 1 trang -->
+                <li class="page-item" th:classappend="${(trangHienTai ?: 1) <= 1 ? 'disabled' : ''}">
+                    <a class="page-link text-warning" th:href="@{|${duongDan}/${(trangHienTai ?: 1) - 1}|}" title="Trang trước">
+                        <i class="bi bi-chevron-left"></i>
+                    </a>
+                </li>
+                
+                <!-- Khu vực ở giữa: [ Input ] / Tổng số trang -->
+                <li class="page-item d-flex align-items-center px-2" style="background-color: var(--bs-body-bg); border-top: 1px solid #dee2e6; border-bottom: 1px solid #dee2e6;">
+                    <input type="number" id="jumpPageInput" class="form-control form-control-sm text-center border-warning fw-bold text-warning" 
+                           style="width: 60px; height: 34px; box-shadow: none;" 
+                           title="Nhập số trang và bấm Enter"
+                           th:value="${trangHienTai ?: 1}" 
+                           th:attr="data-url=@{|${duongDan}/|}, data-max=${tongSoTrang ?: 10}">
+                    <span class="mx-2 text-muted fw-bold"> / [[${tongSoTrang ?: 10}]]</span>
+                </li>
+                
+                <!-- Nút > Tiến 1 trang -->
+                <li class="page-item" th:classappend="${(trangHienTai ?: 1) >= (tongSoTrang ?: 10) ? 'disabled' : ''}">
+                    <a class="page-link text-warning" th:href="@{|${duongDan}/${(trangHienTai ?: 1) + 1}|}" title="Trang sau">
+                        <i class="bi bi-chevron-right"></i>
+                    </a>
+                </li>
+
+                <!-- Nút >> Đến trang cuối -->
+                <li class="page-item" th:classappend="${(trangHienTai ?: 1) >= (tongSoTrang ?: 10) ? 'disabled' : ''}">
+                    <a class="page-link text-warning" th:href="@{|${duongDan}/${tongSoTrang ?: 10}|}" title="Trang cuối">
+                        <i class="bi bi-chevron-bar-right"></i>
+                    </a>
+                </li>
+
+            </ul>
+        </nav>
+
+        <!-- Javascript xử lý việc gõ số rồi bấm Enter -->
+        <script>
+            document.addEventListener("DOMContentLoaded", function() {
+                const jumpInput = document.getElementById('jumpPageInput');
+                if (jumpInput) {
+                    jumpInput.addEventListener('keypress', function (e) {
+                        // Bắt sự kiện người dùng bấm phím Enter (mã là 13 hoặc key là 'Enter')
+                        if (e.key === 'Enter') {
+                            let page = parseInt(this.value);
+                            let maxPage = parseInt(this.getAttribute('data-max'));
+                            let baseUrl = this.getAttribute('data-url');
+                            
+                            // Chặn lỗi người dùng nhập bậy: Nhỏ hơn 1 thì ép về 1, lớn hơn max thì ép về max
+                            if (isNaN(page) || page < 1) page = 1;
+                            if (page > maxPage) page = maxPage;
+                            
+                            // Chuyển hướng trình duyệt sang trang mới
+                            window.location.href = baseUrl + page;
+                        }
+                    });
+                }
+            });
+        </script>
+    </div>
+
+</body>
+</html>

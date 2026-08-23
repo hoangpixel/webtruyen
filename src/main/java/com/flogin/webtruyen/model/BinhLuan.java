@@ -2,11 +2,12 @@ package com.flogin.webtruyen.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import java.time.LocalDateTime;
 
 @Data
 @Entity
-@Table(name = "danh_gia")
-public class DanhGia {
+@Table(name = "binh_luan")
+public class BinhLuan {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
@@ -19,5 +20,8 @@ public class DanhGia {
     @JoinColumn(name = "tai_khoan_id")
     private TaiKhoan taiKhoan;
 
-    private int diemSao;
+    @Column(columnDefinition = "TEXT")
+    private String noiDung;
+
+    private LocalDateTime thoiGian; 
 }

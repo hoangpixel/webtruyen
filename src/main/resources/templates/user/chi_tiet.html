@@ -8,25 +8,43 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
     
     <style>
-        .bia-truyen { width: 100%; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
+        .bia-truyen { 
+            width: 100%; 
+            max-width: 220px;
+            border-radius: 10px; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5); 
+            display: block;
+            margin: 0 auto;
+            object-fit: cover;
+            aspect-ratio: 2/3;
+        }
         .text-hot { color: #ff5722; font-weight: bold; }
         .chuong-list { max-height: 400px; overflow-y: auto; }
         .chuong-item { text-decoration: none; color: inherit; padding: 10px; display: block; border-bottom: 1px solid rgba(255,255,255,0.1); transition: 0.2s; }
         .chuong-item:hover { background-color: rgba(255, 87, 34, 0.1); color: #ff5722; padding-left: 15px; }
+                .dropdown:hover .dropdown-menu {
+            display: block;
+            margin-top: 0;
+        }
+        .rating-stars {
+    font-size: 2rem; /* Kích thước sao to rõ */
+    color: #ccc;     /* Màu xám mặc định khi chưa chọn */
+    cursor: pointer;
+}
+.rating-stars .star {
+    transition: color 0.2s ease-in-out;
+}
+/* Khi rê chuột vào sao nào, hoặc sao đó đã được chọn thì chuyển sang màu vàng */
+.rating-stars .star.active,
+.rating-stars .star:hover,
+.rating-stars .star:hover ~ .star {
+    /* Mẹo CSS: Xử lý màu sắc sáng lên */
+}
     </style>
 </head>
 <body>
 
-    <!-- THANH ĐIỀU HƯỚNG (Copy y chang index.html) -->
-    <nav class="navbar navbar-expand-lg sticky-top shadow-sm" style="background-color: var(--bs-body-bg);">
-        <div class="container">
-            <a class="navbar-brand text-hot" href="/index.html"><i class="bi bi-book-half"></i> Tàng Kinh Các</a>
-            <!-- Giữ lại thanh search và nút Đổi Theme y như cũ -->
-            <button class="btn ms-auto" id="btn-theme-toggle" style="border: none; font-size: 1.2rem;">
-                <i class="bi bi-moon-stars-fill text-warning" id="icon-theme"></i>
-            </button>
-        </div>
-    </nav>
+    <div th:replace="~{fragments/header :: navbar}"></div>
 
     <!-- NỘI DUNG CHÍNH -->
     <div class="container mt-4">
@@ -34,9 +52,8 @@
         <!-- BREADCRUMB (Đường dẫn) -->
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="/index.html" class="text-decoration-none text-muted">Trang Chủ</a></li>
-                <li class="breadcrumb-item"><a href="#" class="text-decoration-none text-muted">Tiên Hiệp</a></li>
-                <li class="breadcrumb-item active text-hot" aria-current="page">Ta Là Tà Đế</li>
+                <li class="breadcrumb-item"><a th:href="@{/}" class="text-decoration-none text-muted">Trang Chủ</a></li>
+                <li class="breadcrumb-item active text-hot" aria-current="page" th:text="${infoTruyen.tenTruyen}">Minh Hoàng</li>
             </ol>
         </nav>
 
@@ -44,38 +61,68 @@
         <div class="row mt-4">
             <!-- Cột trái: Ảnh bìa -->
             <div class="col-md-4 col-lg-3 mb-4 text-center">
-                <img src="https://via.placeholder.com/300x450" class="bia-truyen mb-3" alt="Bìa truyện">
+                <img th:src="@{'/images/truyen/' + ${infoTruyen.anhBia}}" class="bia-truyen mb-3" alt="Bìa truyện">
                 <div class="d-flex justify-content-center gap-2">
                     <button class="btn btn-danger w-100 fw-bold"><i class="bi bi-book"></i> ĐỌC TỪ ĐẦU</button>
                 </div>
                 <div class="d-flex justify-content-center gap-2 mt-2">
                     <button class="btn btn-outline-warning w-50"><i class="bi bi-bookmark-heart"></i> LƯU</button>
-                    <button class="btn btn-outline-info w-50"><i class="bi bi-share"></i> CHIA SẺ</button>
+                    <button id="btnShare" class="btn btn-outline-info w-50"><i class="bi bi-share"></i> CHIA SẺ</button>
                 </div>
             </div>
 
             <!-- Cột phải: Chi tiết -->
             <div class="col-md-8 col-lg-9">
-                <h2 class="fw-bold mb-3">Ta Là Tà Đế</h2>
+                <h2 class="fw-bold mb-3" th:text="${infoTruyen.tenTruyen}">Minh Hoàng</h2>
                 
                 <ul class="list-unstyled">
-                    <li class="mb-2"><strong><i class="bi bi-person-fill"></i> Tác giả:</strong> <span class="text-info">Thời Đại Mạn Vương</span></li>
-                    <li class="mb-2"><strong><i class="bi bi-rss"></i> Trạng thái:</strong> <span class="badge bg-success">Đang ra</span></li>
+                    <li class="mb-2"><strong><i class="bi bi-person-fill"></i> Tác giả:</strong> <span class="text-info" th:text="${infoTruyen.tacGia}">Thời Đại Mạn Vương</span></li>
+                    <li class="mb-2"><strong><i class="bi bi-rss"></i> Trạng thái:</strong> <span class="badge bg-success" th:text="${infoTruyen.trangThai}">Đang ra</span></li>
                     <li class="mb-2"><strong><i class="bi bi-tags-fill"></i> Thể loại:</strong> 
-                        <span class="badge bg-secondary">Tiên Hiệp</span> 
-                        <span class="badge bg-secondary">Hài Hước</span> 
-                        <span class="badge bg-secondary">Hệ Thống</span>
+                        <span class="badge bg-secondary me-1" th:each="tl : ${infoTruyen.danhSachTheLoai}" th:text="${tl.tenTheLoai}"></span> 
                     </li>
-                    <li class="mb-2"><strong><i class="bi bi-eye-fill"></i> Lượt xem:</strong> 1,250,300</li>
                     <li class="mb-2">
-                        <strong><i class="bi bi-star-fill text-warning"></i> Đánh giá:</strong> 
-                        4.8/5 (3,200 lượt)
+                        <strong><i class="bi bi-eye-fill"></i> Lượt xem:</strong> 
+                        <span th:text="${infoTruyen.luotXem}">1,250,300</span>
+                    </li>
+                    
+            
+                    <li class="mb-2">
+                        <strong><i class="bi bi-award-fill text-danger"></i> Đánh giá:</strong> 
+                        <span class="fw-bold text-warning fs-5" th:text="${infoTruyen.diemTrungBinh}">4.8</span><span class="fw-bold text-warning">/5</span> 
+                        <span class="text-muted" th:text="'(' + ${infoTruyen.tongSoDanhGia} + ' lượt)'">(3,200 lượt)</span>
+                    </li>
+
+
+                    <li class="mb-2 d-flex align-items-center flex-wrap gap-2">
+                        <strong><i class="bi bi-star-fill text-warning"></i> Chấm điểm:</strong> 
+                        
+                        <form th:action="@{/them-danh-gia}" method="POST" class="d-flex align-items-center gap-2 mb-0">
+                            <input type="hidden" name="truyenId" th:value="${infoTruyen.id}">
+                            
+                            <div id="star-container" class="rating-stars fs-5 text-secondary d-flex">
+                                <i class="bi bi-star-fill star" data-value="1"></i>
+                                <i class="bi bi-star-fill star" data-value="2"></i>
+                                <i class="bi bi-star-fill star" data-value="3"></i>
+                                <i class="bi bi-star-fill star" data-value="4"></i>
+                                <i class="bi bi-star-fill star" data-value="5"></i>
+                            </div>
+                            
+                            <input type="hidden" name="diemSao" id="diemSaoInput" th:value="${soSaoCu != null ? soSaoCu : 5}">
+                            
+                            <button th:if="${session.nguoiDung != null}" type="submit" class="btn btn-warning btn-sm p-1 lh-1" title="Gửi đánh giá">
+                                <i class="bi bi-send-fill"></i>
+                            </button>
+                            <a th:if="${session.nguoiDung == null}" th:href="@{/login-user}" class="badge bg-danger text-decoration-none">
+                                Đăng nhập để rate
+                            </a>
+                        </form>
                     </li>
                 </ul>
 
                 <!-- Tóm tắt truyện -->
                 <h5 class="mt-4 border-bottom pb-2"><i class="bi bi-card-text"></i> Tóm Tắt Nội Dung</h5>
-                <p class="text-justify" style="line-height: 1.8;">
+                <p class="text-justify" style="line-height: 1.8;" th:text="${infoTruyen.moTa}">
                     Tạ Diệm vô tình xuyên không vào cơ thể của một trai bao bị bóc lột nhan sắc đến chết. Để sống sót, hắn kích hoạt "Hệ Thống Tà Đế", bắt đầu hành trình thu thập "điểm phẫn nộ" bằng cách chọc tức người khác. Một câu chuyện cực kỳ hài hước và mặn mòi...
                 </p>
             </div>
@@ -85,36 +132,132 @@
         <div class="row mt-5">
             <div class="col-lg-8">
                 <h5 class="border-bottom pb-2 text-warning"><i class="bi bi-list-ol"></i> Danh Sách Chương</h5>
-                <div class="chuong-list bg-body-tertiary p-2 rounded shadow-sm">
-                    <!-- Dummy data vòng lặp chương -->
-                    <a href="/user/doc_truyen.html" class="chuong-item">Chương 1: Xuyên Không Thành Trai Bao</a>
-                    <a href="#" class="chuong-item">Chương 2: Hệ Thống Chọc Tức Người Khác</a>
-                    <a href="#" class="chuong-item">Chương 3: Mỹ Nữ Xin Tự Trọng</a>
-                    <a href="#" class="chuong-item text-muted">... Tải thêm chương ...</a>
+                <div class="chuong-list bg-body-tertiary rounded shadow-sm">
+                    <a th:each="chuong : ${infoTruyen.danhSachChuong}" 
+                       th:href="@{/xem-chuong/{id}(id=${chuong.id})}" 
+                       class="chuong-item">
+                       <i class="bi bi-journal-text me-2"></i>
+                       <span th:text="'Chương ' + ${chuong.soChuong} + ' : ' + ${chuong.tenChuong}"></span>
+                    </a>
                 </div>
             </div>
             
-            <div class="col-lg-4 mt-4 mt-lg-0">
-                <h5 class="border-bottom pb-2 text-info"><i class="bi bi-chat-dots"></i> Bình Luận (150)</h5>
+<div class="col-lg-4 mt-4 mt-lg-0">
+                <!-- Sửa lại cách hiển thị số bình luận bằng [[...]] để không bị nuốt icon -->
+                <h5 class="border-bottom pb-2 text-info"><i class="bi bi-chat-dots"></i> Bình Luận ([[${tongBinhLuan}]])</h5>
+                
                 <div class="bg-body-tertiary p-3 rounded shadow-sm">
-                    <textarea class="form-control mb-2" rows="3" placeholder="Nhập bình luận của bạn..."></textarea>
-                    <button class="btn btn-primary w-100 mb-4">Gửi Bình Luận</button>
+                    <!-- Check th:if: Nếu đăng nhập rồi mới hiện form nhập -->
+                    <form th:if="${session.nguoiDung != null}" th:action="@{/them-binh-luan}" method="POST">
+                        <!-- Đã bổ sung name="truyenId" -->
+                        <input type="hidden" name="truyenId" th:value="${infoTruyen.id}">
+                        <textarea name="noiDung" class="form-control mb-2" rows="3" placeholder="Nhập bình luận của bạn..." required></textarea>
+                        <button type="submit" class="btn btn-primary w-100 mb-4"><i class="bi bi-send"></i> Gửi Bình Luận</button>
+                    </form>
                     
-                    <!-- Dummy 1 comment -->
-                    <div class="d-flex mb-3">
-                        <img src="https://via.placeholder.com/40" class="rounded-circle me-2" alt="Avatar" width="40" height="40">
+                    <div th:if="${session.nguoiDung == null}" class="alert alert-warning text-center mb-4">
+                        Vui lòng <a th:href="@{/login-user}" class="alert-link">Đăng nhập</a> để tham gia bình luận.
+                    </div>
+                    
+                    <!-- Lặp danh sách bình luận -->
+                    <!-- Sửa lại check rỗng bằng #lists.isEmpty() -->
+                    <div th:if="${not #lists.isEmpty(danhSachBinhLuan)}" class="d-flex mb-3" th:each="bl : ${danhSachBinhLuan}">
+                        <!-- Lấy avatar của chủ nhân bình luận (Giả sử bảng TaiKhoan có cột avatar) -->
+                        <img th:src="@{'/images/' + ${bl.taiKhoan.avatar != null ? bl.taiKhoan.avatar : 'default-avatar.png'}}" class="rounded-circle me-2" alt="Avatar" width="40" height="40" style="object-fit: cover;">
                         <div>
-                            <strong class="text-warning">Đạo Hữu Vô Danh</strong> <small class="text-muted">- 2 giờ trước</small>
-                            <p class="mb-0 small">Truyện cuốn quá, art cũng đẹp nữa. Xin lịch ra chương mới ad ơi!</p>
+                            <!-- Lấy tên của chủ nhân bình luận -->
+                            <strong class="text-warning" th:text="${bl.taiKhoan.hoTen}">Tên User</strong> 
+                            <!-- Thời gian -->
+                            <small class="text-muted" th:text="${bl.thoiGian != null ? #temporals.format(bl.thoiGian, 'dd/MM/yyyy HH:mm') : 'Vừa xong'}"></small>
+                            <!-- Nội dung -->
+                            <p class="mb-0 small" th:text="${bl.noiDung}">Nội dung bình luận...</p>
                         </div>
+                    </div>
+
+                    <!-- Nếu chưa có bình luận nào -->
+                    <div th:if="${#lists.isEmpty(danhSachBinhLuan)}" class="text-center mb-3">
+                        <strong class="text-secondary fst-italic">Chưa có bình luận nào. Hãy là người đầu tiên bóc tem!</strong>
                     </div>
                 </div>
             </div>
+
         </div>
 
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script th:src="@{/user/js/doi_mau.js}"></script>
+<script>
+        const stars = document.querySelectorAll('#star-container .star');
+        const diemSaoInput = document.getElementById('diemSaoInput');
+
+        stars.forEach((star, index) => {
+            // Lướt chuột
+            star.addEventListener('mouseover', () => {
+                resetStars();
+                highlightStars(index + 1);
+            });
+
+            // Rút chuột ra
+            document.getElementById('star-container').addEventListener('mouseleave', () => {
+                resetStars();
+                highlightStars(diemSaoInput.value);
+            });
+
+            // Click chốt sao
+            star.addEventListener('click', () => {
+                const val = star.getAttribute('data-value');
+                diemSaoInput.value = val;
+                highlightStars(val);
+            });
+        });
+
+        function highlightStars(count) {
+            for(let i = 0; i < count; i++) {
+                stars[i].classList.remove('text-secondary');
+                stars[i].classList.add('text-warning');
+            }
+        }
+
+        function resetStars() {
+            stars.forEach(s => {
+                s.classList.remove('text-warning');
+                s.classList.add('text-secondary');
+            });
+        }
+        
+        // Chạy lần đầu để set màu sao mặc định (hoặc sao cũ)
+        const initialStars = document.getElementById('diemSaoInput').value;
+        highlightStars(initialStars);
+
+// Xử lý nút Chia sẻ (Có phân biệt Điện thoại / Máy tính)
+        document.getElementById('btnShare').addEventListener('click', async () => {
+            // 1. Kiểm tra xem người dùng đang xài Điện thoại hay Máy tính
+            const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+
+            // 2. Nếu là Điện thoại và trình duyệt có hỗ trợ share
+            if (isMobile && navigator.share) {
+                try {
+                    await navigator.share({
+                        title: 'Đọc truyện hay trên Tàng Kinh Các',
+                        text: 'Vào đọc thử siêu phẩm này đi đạo hữu ơi!',
+                        url: window.location.href
+                    });
+                } catch (err) {
+                    console.error('Lỗi chia sẻ: ', err);
+                }
+            } 
+            // 3. Nếu là Máy tính thì ép Copy Link luôn, không thèm xài bảng Share của Windows
+            else {
+                try {
+                    await navigator.clipboard.writeText(window.location.href);
+                    alert("Đã copy link truyện! Mở khung chat dán (Ctrl+V) gửi cho bạn bè ngay nhé.");
+                } catch (err) {
+                    console.error('Lỗi copy: ', err);
+                    alert("Trình duyệt không hỗ trợ copy tự động, bạn hãy copy link trên thanh địa chỉ nhé!");
+                }
+            }
+        });
+    </script>
 </body>
 </html>

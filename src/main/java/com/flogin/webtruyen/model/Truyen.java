@@ -35,4 +35,7 @@ public class Truyen {
 
     @OneToMany(mappedBy = "truyen", cascade = CascadeType.ALL)
     private List<Chuong> danhSachChuong;
+
+    @Transient
+    private String chuongMoiNhat;
 }
