@@ -3,6 +3,10 @@ package com.flogin.webtruyen.service;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.flogin.webtruyen.model.Chuong;
@@ -46,5 +50,12 @@ public class TruyenService {
     public List<Truyen> layDanhSachTop10TruyenHot()
     {
         return repo.findTop10ByOrderByLuotXemDesc();
+    }
+
+    public Page<Truyen> layDanhSachTheoPhanTrang(int trangHienTai, int size)
+    {   
+        Sort sapXepMoiNhat = Sort.by(Sort.Direction.DESC, "id");
+        Pageable pageable = PageRequest.of(trangHienTai - 1, size, sapXepMoiNhat);
+        return repo.findAll(pageable);
     }
 }   

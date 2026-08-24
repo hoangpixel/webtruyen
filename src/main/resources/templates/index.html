@@ -79,9 +79,9 @@
 
         </div>
 
-        <!-- Gọi mảnh ghép phân trang -->
-        <div th:replace="~{fragments/phan_trang :: phantrang(duongDan='/index', trangHienTai=${trangHienTai}, tongSoTrang=${tongSoTrang})}"></div>
 
+        // phân trang
+<div th:replace="~{fragments/phan_trang :: phantrang(duongDan='', trangHienTai=${trangHienTai}, tongSoTrang=${tongSoTrang})}"></div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>

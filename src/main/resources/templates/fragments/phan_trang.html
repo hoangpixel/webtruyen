@@ -2,7 +2,6 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <body>
 
-    <!-- Mảnh ghép phân trang giao diện vuông 40x40 -->
     <div th:fragment="phantrang(duongDan, trangHienTai, tongSoTrang)">
         <section class="phantrang py-4">
             <div class="container">
@@ -10,7 +9,7 @@
                     <div class="col-auto text-center d-flex align-items-center gap-3">
 
                         <!-- Nút << Về trang đầu -->
-                        <a th:href="@{|${duongDan}/1|}" 
+                        <a th:href="${duongDan == ''} ? |?page=1| : @{${duongDan}(page=1)}" 
                            class="page-link-custom border-0 btn btn-outline-secondary btn-sm d-flex align-items-center justify-content-center"
                            style="width: 40px; height: 40px;"
                            th:classappend="${(trangHienTai ?: 1) <= 1 ? 'disabled' : ''}">
@@ -18,7 +17,7 @@
                         </a>
 
                         <!-- Nút < Lùi 1 trang -->
-                        <a th:href="@{|${duongDan}/${(trangHienTai ?: 1) - 1}|}" 
+                        <a th:href="${duongDan == ''} ? |?page=${(trangHienTai ?: 1) - 1}| : @{${duongDan}(page=${(trangHienTai ?: 1) - 1})}" 
                            class="page-link-custom btn btn-outline-secondary btn-sm d-flex align-items-center justify-content-center"
                            style="width: 40px; height: 40px;"
                            th:classappend="${(trangHienTai ?: 1) <= 1 ? 'disabled' : ''}">
@@ -32,12 +31,12 @@
                                    th:value="${trangHienTai ?: 1}"
                                    class="form-control d-inline-block text-center border-secondary fw-bold" 
                                    style="width: 60px; display: inline-block; box-shadow: none;"
-                                   th:attr="data-url=@{|${duongDan}/|}, data-max=${tongSoTrang ?: 10}"/>
+                                   th:attr="data-url=${duongDan == ''} ? '' : @{${duongDan}}, data-max=${tongSoTrang ?: 10}"/>
                             <span class="fw-bold mx-1">/ [[${tongSoTrang ?: 10}]]</span>
                         </span>
 
                         <!-- Nút > Tiến 1 trang -->
-                        <a th:href="@{|${duongDan}/${(trangHienTai ?: 1) + 1}|}" 
+                        <a th:href="${duongDan == ''} ? |?page=${(trangHienTai ?: 1) + 1}| : @{${duongDan}(page=${(trangHienTai ?: 1) + 1})}" 
                            class="page-link-custom btn btn-outline-secondary btn-sm d-flex align-items-center justify-content-center"
                            style="width: 40px; height: 40px;"
                            th:classappend="${(trangHienTai ?: 1) >= (tongSoTrang ?: 10) ? 'disabled' : ''}">
@@ -45,7 +44,7 @@
                         </a>
 
                         <!-- Nút >> Đến trang cuối -->
-                        <a th:href="@{|${duongDan}/${tongSoTrang ?: 10}|}" 
+                        <a th:href="${duongDan == ''} ? |?page=${tongSoTrang ?: 10}| : @{${duongDan}(page=${tongSoTrang ?: 10})}" 
                            class="page-link-custom border-0 btn btn-outline-secondary btn-sm d-flex align-items-center justify-content-center"
                            style="width: 40px; height: 40px;"
                            th:classappend="${(trangHienTai ?: 1) >= (tongSoTrang ?: 10) ? 'disabled' : ''}">
@@ -57,7 +56,7 @@
             </div>
         </section>
 
-        <!-- Javascript xử lý việc gõ số rồi bấm Enter -->
+        <!-- Javascript xử lý nhảy trang -->
         <script>
             document.addEventListener("DOMContentLoaded", function() {
                 const jumpInput = document.getElementById('pageInput');
@@ -71,7 +70,7 @@
                             if (isNaN(page) || page < 1) page = 1;
                             if (page > maxPage) page = maxPage;
                             
-                            window.location.href = baseUrl + page;
+                            window.location.href = (baseUrl === '' ? '' : baseUrl) + "?page=" + page;
                         }
                     });
                 }

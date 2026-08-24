@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 
@@ -41,9 +42,13 @@ public class TruyenController {
     BinhLuanService busBinhLuan;
 
     @GetMapping({"/index", "/"})
-    public String loadDanhSachTruyen(Model model) {
-        List<Truyen> ds = bus.layDanhSach();
-        model.addAttribute("danhSachTruyen", ds);
+    public String loadDanhSachTruyen(@RequestParam(name = "page", defaultValue = "1") int page ,Model model) {
+
+        int pageSize = 2;
+        Page<Truyen> pageAble = bus.layDanhSachTheoPhanTrang(page, pageSize);
+        model.addAttribute("danhSachTruyen", pageAble.getContent());
+        model.addAttribute("trangHienTai", page);
+        model.addAttribute("tongSoTrang", pageAble.getTotalPages());
 
         List<Truyen> dsHot = bus.layDanhSachTop10TruyenHot();
         model.addAttribute("danhSachHot", dsHot);
