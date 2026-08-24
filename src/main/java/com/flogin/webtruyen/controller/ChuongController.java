@@ -40,6 +40,9 @@ public class ChuongController {
         Chuong chuongTruoc = null;
         Chuong chuongSau = null;
 
+        busTruyen.themLuotXemMoi(truyen);
+        busChuong.themLuotXemChuong(chuong);
+
         for (int i = 0; i < dsChuong.size(); i++) 
         {
             if (dsChuong.get(i).getId() == idChuong) {

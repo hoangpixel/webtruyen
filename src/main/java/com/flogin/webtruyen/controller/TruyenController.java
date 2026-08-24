@@ -12,10 +12,12 @@ import com.fasterxml.jackson.annotation.JsonCreator.Mode;
 import com.flogin.webtruyen.model.BinhLuan;
 import com.flogin.webtruyen.model.DanhGia;
 import com.flogin.webtruyen.model.TaiKhoan;
+import com.flogin.webtruyen.model.TheLoai;
 import com.flogin.webtruyen.model.Truyen;
 import com.flogin.webtruyen.service.BinhLuanService;
 import com.flogin.webtruyen.service.DanhGiaService;
 import com.flogin.webtruyen.service.TaiKhoanService;
+import com.flogin.webtruyen.service.TheLoaiService;
 import com.flogin.webtruyen.service.TruyenService;
 
 import jakarta.servlet.http.HttpSession;
@@ -41,6 +43,9 @@ public class TruyenController {
 
     @Autowired
     BinhLuanService busBinhLuan;
+
+    @Autowired
+    TheLoaiService busTheLoai;
 
     @GetMapping({"/index", "/"})
     public String loadDanhSachTruyen(@RequestParam(name = "page", defaultValue = "1") int page ,Model model) {
@@ -68,6 +73,37 @@ public class TruyenController {
         model.addAttribute("tuKhoa", tenTruyen);
         
         return "index";
+    }
+
+    @GetMapping("/tim-kiem-nang-cao")
+    public String trangTimKiemNangCao(
+            @RequestParam(name = "page", defaultValue = "1") int page,
+            @RequestParam(name = "tenTruyen", required = false) String tenTruyen,
+            @RequestParam(name = "tacGia", required = false) String tacGia,
+            @RequestParam(name = "theLoai", required = false) List<Integer> theLoaiIds,
+            Model model) {
+
+        List<TheLoai> dsTheLoai = busTheLoai.layDanhSach();
+        model.addAttribute("dsTheLoai", dsTheLoai);
+
+        if (tenTruyen != null || tacGia != null || theLoaiIds != null) 
+        {
+            int size = 12;
+            Page<Truyen> pageAble = bus.timKiemNangCao(tenTruyen, tacGia, theLoaiIds, page, size);
+
+            long soLuongTimThay = pageAble.getTotalElements();
+
+            model.addAttribute("danhSachTruyen", pageAble.getContent());
+            model.addAttribute("trangHienTai", page);
+            model.addAttribute("tongSoTrang", pageAble.getTotalPages());
+            
+            model.addAttribute("tuKhoaTen", tenTruyen);
+            model.addAttribute("tuKhoaTacGia", tacGia);
+            model.addAttribute("listTheLoaiDaChon", theLoaiIds);
+            model.addAttribute("soLuongTimThay", soLuongTimThay);
+        }
+
+        return "/user/tim_kiem_nang_cao";
     }
     
     @GetMapping({"/chi-tiet-truyen/{id}", "/chi-tiet-truyen/{tenTruyen}/{id}"})
@@ -138,5 +174,4 @@ public class TruyenController {
         busBinhLuan.themBinhLuan(bl);
         return "redirect:/chi-tiet-truyen/" + truyenId;
     }
-    
 }

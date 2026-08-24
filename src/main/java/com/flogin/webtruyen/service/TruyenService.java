@@ -73,4 +73,40 @@ public class TruyenService {
         }
         return pageTruyen;
     }
+
+    public Page<Truyen> timKiemNangCao(String tenTruyen, String tacGia, List<Integer> theLoaiIds, int trangHienTai, int size) {
+        // Sắp xếp ID giảm dần (truyện mới lên đầu)
+        Pageable pageable = PageRequest.of(trangHienTai - 1, size, Sort.by(Sort.Direction.DESC, "id"));
+
+        // Mẹo bẫy lỗi: Nếu list thể loại rỗng (khách không chọn gì), ép về null để câu Query bên Repo không bị lỗi
+        if (theLoaiIds != null && theLoaiIds.isEmpty()) {
+            theLoaiIds = null;
+        }
+
+        // Gọi DB lấy dữ liệu
+        Page<Truyen> pageTruyen = repo.timKiemNangCao(tenTruyen, tacGia, theLoaiIds, pageable);
+
+        // Gắn số chương mới nhất (Y chang hàm tìm kiếm cơ bản của ông)
+        for(Truyen truyen : pageTruyen.getContent()) {
+            Chuong chuong = repoChuong.findTopByTruyenOrderBySoChuongDesc(truyen);
+            if(chuong != null) {
+                truyen.setChuongMoiNhat("Chapter : " + chuong.getSoChuong());
+            } else {
+                truyen.setChuongMoiNhat("Chưa có chương nào");
+            }
+        }
+        return pageTruyen;
+    }
+
+    public boolean themLuotXemMoi(Truyen truyen)
+    {
+        if(truyen != null)
+        {
+            truyen.setLuotXem(truyen.getLuotXem() + 1);
+            repo.save(truyen);
+            return true;
+        }
+        return false;
+    }
+
 }   

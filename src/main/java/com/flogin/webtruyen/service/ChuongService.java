@@ -23,4 +23,12 @@ public class ChuongService {
     {
         return repoChuong.findById(id).orElse(null);
     }
+
+    public void themLuotXemChuong(Chuong chuong) 
+    {
+        if (chuong != null) {
+            chuong.setLuotXem(chuong.getLuotXem() + 1);
+            repoChuong.save(chuong);
+        }
+    }
 }

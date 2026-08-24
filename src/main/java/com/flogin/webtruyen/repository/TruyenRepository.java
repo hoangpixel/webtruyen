@@ -17,4 +17,13 @@ import jakarta.websocket.server.PathParam;
 public interface TruyenRepository extends JpaRepository<Truyen, Integer>{
     List<Truyen> findTop10ByOrderByLuotXemDesc();
     Page<Truyen> findByTenTruyenContainingOrderByIdDesc(String tenTruyen, Pageable pageable);
+
+    @Query("SELECT DISTINCT t FROM Truyen t LEFT JOIN t.danhSachTheLoai tl " +
+           "WHERE (:tenTruyen IS NULL OR :tenTruyen = '' OR t.tenTruyen LIKE %:tenTruyen%) " +
+           "AND (:tacGia IS NULL OR :tacGia = '' OR t.tacGia LIKE %:tacGia%) " +
+           "AND (:theLoaiIds IS NULL OR tl.id IN :theLoaiIds)")
+    Page<Truyen> timKiemNangCao(@Param("tenTruyen") String tenTruyen, 
+                                @Param("tacGia") String tacGia, 
+                                @Param("theLoaiIds") List<Integer> theLoaiIds, 
+                                Pageable pageable);
 }
