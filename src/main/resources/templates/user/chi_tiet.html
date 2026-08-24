@@ -63,7 +63,9 @@
             <div class="col-md-4 col-lg-3 mb-4 text-center">
                 <img th:src="@{'/images/truyen/' + ${infoTruyen.anhBia}}" class="bia-truyen mb-3" alt="Bìa truyện">
                 <div class="d-flex justify-content-center gap-2">
-                    <button class="btn btn-danger w-100 fw-bold"><i class="bi bi-book"></i> ĐỌC TỪ ĐẦU</button>
+                    <a th:href="@{/doc-truyen/{slug}/{idTruyen}/{idChuong}(slug=${infoTruyen.slug}, idTruyen=${infoTruyen.id}, idChuong=1)}" class="btn btn-danger w-100 fw-bold">
+                        <i class="bi bi-book"></i> ĐỌC TỪ ĐẦU
+                    </a>
                 </div>
                 <div class="d-flex justify-content-center gap-2 mt-2">
                     <a th:href="@{/luu-truyen-yeu-thich/{id}(id=${infoTruyen.id})}" class="btn btn-outline-warning w-50"><i class="bi bi-bookmark-heart"></i> LƯU</a>
@@ -133,12 +135,15 @@
             <div class="col-lg-8">
                 <h5 class="border-bottom pb-2 text-warning"><i class="bi bi-list-ol"></i> Danh Sách Chương</h5>
                 <div class="chuong-list bg-body-tertiary rounded shadow-sm">
+                    
+                    <!-- Đã fix vụ bọc ${} và đổi thành infoTruyen.slug -->
                     <a th:each="chuong : ${infoTruyen.danhSachChuong}" 
-                       th:href="@{/xem-chuong/{id}(id=${chuong.id})}" 
+                       th:href="@{/doc-truyen/{slug}/{idTruyen}/{idChuong}(slug=${infoTruyen.slug}, idTruyen=${infoTruyen.id}, idChuong=${chuong.id})}" 
                        class="chuong-item">
                        <i class="bi bi-journal-text me-2"></i>
                        <span th:text="'Chương ' + ${chuong.soChuong} + ' : ' + ${chuong.tenChuong}"></span>
                     </a>
+                    
                 </div>
             </div>
             

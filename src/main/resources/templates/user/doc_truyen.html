@@ -13,6 +13,7 @@
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     
     <style>
+        .text-hot { color: #ff5722; font-weight: bold; }
         /* Tối ưu hóa vùng đọc truyện */
         .comic-page {
             width: 100%;
@@ -36,59 +37,98 @@
         .select2-dropdown { background-color: var(--bs-body-bg); border: 1px solid #6c757d; }
         .select2-results__option { color: var(--bs-body-color); }
         .select2-container--default .select2-results__option--highlighted[aria-selected] { background-color: #ff5722; }
+        .dropdown:hover .dropdown-menu {
+            display: block;
+            margin-top: 0;
+        }
     </style>
 </head>
 <body>
 
-    <!-- THANH ĐIỀU HƯỚNG CƠ BẢN -->
-    <nav class="navbar navbar-expand-lg border-bottom" style="background-color: var(--bs-body-bg);">
-        <div class="container-fluid px-4">
-            <a class="navbar-brand text-warning fw-bold" href="/user/chi_tiet.html">
-                <i class="bi bi-arrow-left-circle"></i> Trở về trang chi tiết
-            </a>
-            
-            <button class="btn ms-auto" id="btn-theme-toggle" style="border: none; font-size: 1.2rem;">
-                <i class="bi bi-moon-stars-fill text-warning" id="icon-theme"></i>
-            </button>
-        </div>
-    </nav>
+    <div th:replace="~{fragments/header :: navbar}"></div>
 
-    <!-- THANH CÔNG CỤ ĐỌC TRUYỆN (STICKY HEADER - Dính trên đầu) -->
+<!-- THANH CÔNG CỤ ĐỌC TRUYỆN (STICKY HEADER) -->
     <div class="sticky-top shadow-sm py-2" style="background-color: var(--bs-tertiary-bg);">
         <div class="container d-flex justify-content-center align-items-center gap-2">
+            
             <!-- Nút Lùi Chương -->
-            <button class="btn btn-outline-danger"><i class="bi bi-chevron-left"></i> Chap Trước</button>
+            <a th:if="${chuongTruoc != null}" 
+               th:href="@{/doc-truyen/{slug}/{idTruyen}/{idChuong}(slug=${truyen.slug}, idTruyen=${truyen.id}, idChuong=${chuongTruoc.id})}" 
+               class="btn btn-outline-danger">
+               <i class="bi bi-chevron-left"></i> Chap Trước
+            </a>
+            <button th:if="${chuongTruoc == null}" class="btn btn-outline-secondary" disabled>
+               <i class="bi bi-chevron-left"></i> Chap Trước
+            </button>
             
             <!-- ComboBox Select2 chọn chương -->
             <div style="width: 250px;">
-                <select class="form-control select2-chuong" id="chonChuong">
-                    <option value="1">Chương 1: Xuyên Không Thành Trai Bao</option>
-                    <option value="2">Chương 2: Hệ Thống Chọc Tức Người Khác</option>
-                    <option value="3" selected>Chương 3: Mỹ Nữ Xin Tự Trọng</option>
-                    <option value="4">Chương 4: Kế Hoạch Bỏ Trốn</option>
-                    <!-- Tưởng tượng có 1000 chương ở đây, xài Select2 tìm kiếm phát ra luôn -->
+                <!-- Giấu URL gốc vào thuộc tính data-base-url -->
+                <select class="form-control select2-chuong" id="chonChuong" 
+                        th:attr="data-base-url=@{/doc-truyen/{slug}/{idTruyen}(slug=${truyen.slug}, idTruyen=${truyen.id})}">
+                    <option th:each="c : ${dsChuong}" 
+                            th:value="${c.id}" 
+                            th:text="'Chương ' + ${c.soChuong} + ': ' + ${c.tenChuong}"
+                            th:selected="${c.id == chuong.id}">
+                    </option>
                 </select>
             </div>
 
             <!-- Nút Tới Chương -->
-            <button class="btn btn-danger">Chap Sau <i class="bi bi-chevron-right"></i></button>
+            <a th:if="${chuongSau != null}" 
+               th:href="@{/doc-truyen/{slug}/{idTruyen}/{idChuong}(slug=${truyen.slug}, idTruyen=${truyen.id}, idChuong=${chuongSau.id})}" 
+               class="btn btn-danger">
+               Chap Sau <i class="bi bi-chevron-right"></i>
+            </a>
+            <button th:if="${chuongSau == null}" class="btn btn-secondary" disabled>
+               Chap Sau <i class="bi bi-chevron-right"></i>
+            </button>
+            
         </div>
     </div>
 
     <!-- KHU VỰC HIỂN THỊ ẢNH TRUYỆN -->
     <div class="container-fluid p-0 bg-black text-center mt-3 pb-5">
         <!-- Dùng dummy image, sau này Thymeleaf sẽ lặp th:each in ra mớ ảnh này -->
-        <img src="https://via.placeholder.com/800x1200.png?text=Trang+1" class="comic-page" alt="Trang 1">
-        <img src="https://via.placeholder.com/800x1200.png?text=Trang+2" class="comic-page" alt="Trang 2">
-        <img src="https://via.placeholder.com/800x1200.png?text=Trang+3" class="comic-page" alt="Trang 3">
-        <img src="https://via.placeholder.com/800x1200.png?text=Trang+4" class="comic-page" alt="Trang 4">
-    </div>
+        <img th:each="anh : ${dsAnhChuong}" th:src="@{'/images/truyen/' + anh.tenFileAnh}" class="comic-page" th:alt="|Trang ${anh.thuTu}|">
 
-    <!-- THANH CÔNG CỤ DƯỚI ĐÁY (Đọc xong cuộn xuống đáy bấm qua chương tiện hơn) -->
-    <div class="py-3 border-top" style="background-color: var(--bs-tertiary-bg);">
-        <div class="container d-flex justify-content-center align-items-center gap-3">
-            <button class="btn btn-outline-danger btn-lg"><i class="bi bi-chevron-left"></i> Chap Trước</button>
-            <button class="btn btn-danger btn-lg">Chap Sau <i class="bi bi-chevron-right"></i></button>
+<!-- THANH CÔNG CỤ ĐỌC TRUYỆN (STICKY HEADER) -->
+    <div class="shadow-sm py-2" style="background-color: var(--bs-tertiary-bg);">
+        <div class="container d-flex justify-content-center align-items-center gap-2">
+            
+            <!-- Nút Lùi Chương -->
+            <a th:if="${chuongTruoc != null}" 
+               th:href="@{/doc-truyen/{slug}/{idTruyen}/{idChuong}(slug=${truyen.slug}, idTruyen=${truyen.id}, idChuong=${chuongTruoc.id})}" 
+               class="btn btn-outline-danger">
+               <i class="bi bi-chevron-left"></i> Chap Trước
+            </a>
+            <button th:if="${chuongTruoc == null}" class="btn btn-outline-secondary" disabled>
+               <i class="bi bi-chevron-left"></i> Chap Trước
+            </button>
+            
+            <!-- ComboBox Select2 chọn chương -->
+            <div style="width: 250px;">
+                <!-- Giấu URL gốc vào thuộc tính data-base-url -->
+                <select class="form-control select2-chuong" id="chonChuong" 
+                        th:attr="data-base-url=@{/doc-truyen/{slug}/{idTruyen}(slug=${truyen.slug}, idTruyen=${truyen.id})}">
+                    <option th:each="c : ${dsChuong}" 
+                            th:value="${c.id}" 
+                            th:text="'Chương ' + ${c.soChuong} + ': ' + ${c.tenChuong}"
+                            th:selected="${c.id == chuong.id}">
+                    </option>
+                </select>
+            </div>
+
+            <!-- Nút Tới Chương -->
+            <a th:if="${chuongSau != null}" 
+               th:href="@{/doc-truyen/{slug}/{idTruyen}/{idChuong}(slug=${truyen.slug}, idTruyen=${truyen.id}, idChuong=${chuongSau.id})}" 
+               class="btn btn-danger">
+               Chap Sau <i class="bi bi-chevron-right"></i>
+            </a>
+            <button th:if="${chuongSau == null}" class="btn btn-secondary" disabled>
+               Chap Sau <i class="bi bi-chevron-right"></i>
+            </button>
+            
         </div>
     </div>
 
@@ -102,19 +142,17 @@
     
     <script th:src="@{/user/js/doi_mau.js}"></script>
     <script>
-        // 1. Khởi tạo cái ComboBox xịn xò Select2
         $(document).ready(function() {
             $('.select2-chuong').select2({
-                placeholder: "Tìm kiếm chương...",
-                width: '100%' // Đảm bảo nó dãn đều giao diện
+                width: '100%' 
             });
 
-            // Sự kiện: Khi user chọn 1 chương khác, tự động nhảy trang (giả lập)
-            $('#chonChuong').on('select2:select', function (e) {
+            // Lắng nghe sự kiện đổi chương theo CLASS thay vì ID
+            $('.select2-chuong').on('select2:select', function (e) {
                 let chuongId = e.params.data.id;
-                // Mốt thay URL bằng link thật của Spring Boot
-                // window.location.href = "/doc-truyen?chuongId=" + chuongId;
-                console.log("Đang chuyển sang chương ID: " + chuongId);
+                let baseUrl = $(this).attr('data-base-url');
+                
+                window.location.href = baseUrl + "/" + chuongId; 
             });
         });
     </script>

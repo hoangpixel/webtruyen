@@ -2,6 +2,8 @@ package com.flogin.webtruyen.repository;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -14,4 +16,5 @@ import jakarta.websocket.server.PathParam;
 @Repository
 public interface TruyenRepository extends JpaRepository<Truyen, Integer>{
     List<Truyen> findTop10ByOrderByLuotXemDesc();
+    Page<Truyen> findByTenTruyenContainingOrderByIdDesc(String tenTruyen, Pageable pageable);
 }

@@ -54,4 +54,23 @@ public class TruyenService {
         }
         return pageTruyen;
     }
+
+    public Page<Truyen> timKiemCoBan(int trangHienTai, int size, String tenTruyen)
+    {
+        Pageable pageable = PageRequest.of(trangHienTai - 1, size);
+        Page<Truyen> pageTruyen = repo.findByTenTruyenContainingOrderByIdDesc(tenTruyen, pageable);
+
+        for(Truyen truyen : pageTruyen.getContent())
+        {
+            Chuong chuong = repoChuong.findTopByTruyenOrderBySoChuongDesc(truyen);
+            if(chuong != null)
+            {
+                truyen.setChuongMoiNhat("Chapter : " + chuong.getSoChuong());
+            }else
+            {
+                truyen.setChuongMoiNhat("Chưa có chương nào");
+            }
+        }
+        return pageTruyen;
+    }
 }   

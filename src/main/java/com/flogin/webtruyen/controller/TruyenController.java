@@ -8,6 +8,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 
+import com.fasterxml.jackson.annotation.JsonCreator.Mode;
 import com.flogin.webtruyen.model.BinhLuan;
 import com.flogin.webtruyen.model.DanhGia;
 import com.flogin.webtruyen.model.TaiKhoan;
@@ -54,8 +55,22 @@ public class TruyenController {
         model.addAttribute("danhSachHot", dsHot);
         return "index";
     }
+
+    @GetMapping("/tim-kiem")
+    public String timKiemCoban(@RequestParam(name = "page", defaultValue = "1") int page,@RequestParam("tenTruyen") String tenTruyen, Model model) {
+        int size = 2;
+        Page<Truyen> pageAble = bus.timKiemCoBan(page, size, tenTruyen);
+
+        model.addAttribute("danhSachTruyen", pageAble.getContent());
+        model.addAttribute("trangHienTai", page);
+        model.addAttribute("tongSoTrang", pageAble.getTotalPages());
+
+        model.addAttribute("tuKhoa", tenTruyen);
+        
+        return "index";
+    }
     
-    @GetMapping("/chi-tiet-truyen/{id}")
+    @GetMapping({"/chi-tiet-truyen/{id}", "/chi-tiet-truyen/{tenTruyen}/{id}"})
     public String xuLyXemChiTietTruyen(@PathVariable("id") int id, Model model, HttpSession session) {
         Truyen infoTruyen = bus.layThongTinTruyen(id);
         model.addAttribute("infoTruyen", infoTruyen);
