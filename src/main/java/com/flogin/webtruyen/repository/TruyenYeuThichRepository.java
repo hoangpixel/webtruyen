@@ -2,6 +2,8 @@ package com.flogin.webtruyen.repository;
 
 import java.util.List;
 
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -12,4 +14,7 @@ import com.flogin.webtruyen.model.TruyenYeuThich;
 @Repository
 public interface TruyenYeuThichRepository extends JpaRepository<TruyenYeuThich, Integer>{
     List<TruyenYeuThich> findByTruyenAndTaiKhoan(Truyen truyen, TaiKhoan taiKhoan);
+    Page<TruyenYeuThich> findByTaiKhoan(TaiKhoan taiKhoan, Pageable pageable);
+    long countByTaiKhoan(TaiKhoan taiKhoan);
+    void deleteByTaiKhoan(TaiKhoan taiKhoan);
 }

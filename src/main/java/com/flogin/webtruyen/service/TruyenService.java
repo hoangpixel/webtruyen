@@ -25,23 +25,6 @@ public class TruyenService {
     @Autowired
     DanhGiaService repoDanhGia;
 
-    public List<Truyen> layDanhSach()
-    {
-        List<Truyen> dsTruyen = repo.findAll();
-        for(Truyen truyen : dsTruyen)
-        {
-            Chuong chuong = repoChuong.findTopByTruyenOrderBySoChuongDesc(truyen);
-            if(chuong != null)
-            {
-                truyen.setChuongMoiNhat("Chapter : " + chuong.getSoChuong());
-            }else
-            {
-                truyen.setChuongMoiNhat("Chưa có chương nào");
-            }
-        }
-        return dsTruyen;
-    }
-
     public Truyen layThongTinTruyen(int id)
     {
         return repo.findById(id).orElse(null);
@@ -56,6 +39,19 @@ public class TruyenService {
     {   
         Sort sapXepMoiNhat = Sort.by(Sort.Direction.DESC, "id");
         Pageable pageable = PageRequest.of(trangHienTai - 1, size, sapXepMoiNhat);
-        return repo.findAll(pageable);
+        Page<Truyen> pageTruyen = repo.findAll(pageable);
+
+        for(Truyen truyen : pageTruyen.getContent())
+        {
+            Chuong chuong = repoChuong.findTopByTruyenOrderBySoChuongDesc(truyen);
+            if(chuong != null)
+            {
+                truyen.setChuongMoiNhat("Chapter : " + chuong.getSoChuong());
+            } else
+            {
+                truyen.setChuongMoiNhat("Chưa có chương nào");
+            }
+        }
+        return pageTruyen;
     }
 }   

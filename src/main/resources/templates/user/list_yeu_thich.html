@@ -17,93 +17,59 @@
         /* Hiệu ứng mờ nút Xóa, chỉ hiện rõ khi đưa chuột vào Card để giao diện không bị rối */
         .btn-xoa { opacity: 0.7; transition: 0.3s; }
         .card:hover .btn-xoa { opacity: 1; }
+                .dropdown:hover .dropdown-menu {
+            display: block;
+            margin-top: 0;
+        }
     </style>
 </head>
 <body>
 
-    <!-- THANH ĐIỀU HƯỚNG -->
-    <nav class="navbar navbar-expand-lg sticky-top shadow-sm" style="background-color: var(--bs-body-bg);">
-        <div class="container">
-            <a class="navbar-brand text-hot" href="/index.html"><i class="bi bi-book-half"></i> Tàng Kinh Các</a>
-            
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto align-items-center">
-                    <li class="nav-item me-3">
-                        <span class="nav-link fw-bold text-info"><i class="bi bi-person-circle"></i> Xin chào, Đạo Hữu</span>
-                    </li>
-                    <li class="nav-item">
-                        <button class="btn" id="btn-theme-toggle" style="border: none; font-size: 1.2rem;">
-                            <i class="bi bi-moon-stars-fill text-warning" id="icon-theme"></i>
-                        </button>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </nav>
+    <div th:replace="~{fragments/header :: navbar}"></div>
 
     <!-- NỘI DUNG CHÍNH -->
     <div class="container mt-4">
         
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="/index.html" class="text-decoration-none text-muted">Trang Chủ</a></li>
-                <li class="breadcrumb-item active text-danger fw-bold" aria-current="page"><i class="bi bi-heart-fill"></i> Tủ Truyện Của Tôi</li>
+                <li class="breadcrumb-item"><a th:href="@{/}" class="text-decoration-none text-muted">Trang Chủ</a></li>
+                <li class="breadcrumb-item active text-danger fw-bold" aria-current="page">Tủ Truyện Của Tôi</li>
             </ol>
         </nav>
 
         <div class="d-flex justify-content-between align-items-center border-bottom pb-2 mb-4">
-            <h4 class="mb-0 fw-bold"><i class="bi bi-bookmarks"></i> Đã Lưu (2)</h4>
-            <button class="btn btn-sm btn-outline-danger"><i class="bi bi-trash3"></i> Xóa tất cả</button>
+            <h4 class="mb-0 fw-bold"><i class="bi bi-bookmarks"></i> ([[${tongTruyenDaLuu}]])</h4>
+            <a th:href="@{/bo-luu-tat-ca}" class="btn btn-sm btn-outline-danger"><i class="bi bi-trash3"></i> Xóa tất cả</a>
         </div>
 
         <div class="row">
             <!-- Truyện 1 -->
-            <div class="col-6 col-md-3 mb-4">
+            <div th:each="item : ${danhSachYeuThich}" class="col-6 col-md-3 mb-4">
                 <div class="card h-100 bg-body-tertiary position-relative">
                     <!-- Nút Bỏ Lưu nằm đè lên góc phải hình ảnh -->
-                    <button class="btn btn-danger btn-sm position-absolute top-0 end-0 m-2 btn-xoa" title="Bỏ lưu">
+                     <a th:href="@{/bo-luu-truyen-yeu-thich/{id}(id=${item.id})}" class="btn btn-danger btn-sm position-absolute top-0 end-0 m-2 btn-xoa" title="Bỏ lưu">
                         <i class="bi bi-heartbreak-fill"></i>
-                    </button>
+                     </a>
                     
-                    <img src="https://via.placeholder.com/300x400" class="card-img-top truyen-bia" alt="Bìa truyện">
+                    <img th:src="@{'/images/truyen/' + ${item.truyen.anhBia}}" class="card-img-top truyen-bia" alt="Bìa truyện">
                     <div class="card-body p-2 d-flex flex-column">
-                        <h6 class="card-title text-truncate mb-1">Ta Là Tà Đế</h6>
-                        <small class="text-muted mb-2">Đã đọc: Chương 105</small>
+                        <h6 class="card-title text-truncate mb-1" th:text="${item.truyen.tenTruyen}">Ta Là Tà Đế</h6>
+                        <small class="text-muted mb-2"><i class="bi bi-bookmark-check"></i> Đang theo dõi</small>
                         <!-- Nút đọc tiếp đẩy xuống dưới cùng -->
-                        <a href="/user/doc_truyen.html" class="btn btn-outline-warning btn-sm mt-auto fw-bold">Đọc Tiếp</a>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Truyện 2 -->
-            <div class="col-6 col-md-3 mb-4">
-                <div class="card h-100 bg-body-tertiary position-relative">
-                    <button class="btn btn-danger btn-sm position-absolute top-0 end-0 m-2 btn-xoa" title="Bỏ lưu">
-                        <i class="bi bi-heartbreak-fill"></i>
-                    </button>
-                    
-                    <img src="https://via.placeholder.com/300x400" class="card-img-top truyen-bia" alt="Bìa truyện">
-                    <div class="card-body p-2 d-flex flex-column">
-                        <h6 class="card-title text-truncate mb-1">Võ Luyện Đỉnh Phong</h6>
-                        <small class="text-muted mb-2">Đã đọc: Chương 3000</small>
-                        <a href="/user/doc_truyen.html" class="btn btn-outline-warning btn-sm mt-auto fw-bold">Đọc Tiếp</a>
+                        <a th:href="@{/chi-tiet-truyen/{id}(id=${item.truyen.id})}" class="btn btn-outline-warning btn-sm mt-auto fw-bold">Xem Chi Tiết</a>
                     </div>
                 </div>
             </div>
             
-            <!-- Nếu không có truyện nào, ông có thể dùng th:if của Thymeleaf để hiển thị cái div này -->
-            <!-- 
-            <div class="col-12 text-center py-5">
+            <div class="col-12 text-center py-5" th:if="${danhSachYeuThich} == null">
                 <h1 class="text-muted"><i class="bi bi-inbox"></i></h1>
                 <p class="text-muted">Tủ truyện của bạn đang trống. Hãy ra trang chủ tìm truyện hay nhé!</p>
-            </div> 
-            -->
+            </div>
+
         </div>
     </div>
+
+   <div th:replace="~{fragments/phan_trang :: phantrang(duongDan='', trangHienTai=${trangHienTai}, tongSoTrang=${tongSoTrang})}"></div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script th:src="@{/user/js/doi_mau.js}"></script>
