@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" data-bs-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản Lý Tài Khoản - Sở Chỉ Huy</title>
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+
+    <style>
+        #wrapper { display: flex; width: 100%; overflow-x: hidden; }
+        #sidebar { min-width: 260px; max-width: 260px; min-height: 100vh; background-color: var(--bs-tertiary-bg); transition: all 0.3s; }
+        #sidebar.toggled { margin-left: -260px; }
+        #content-wrapper { width: 100%; transition: all 0.3s; }
+
+        /* Chống móp Sidebar */
+        .nav-link { color: var(--bs-body-color); padding: 15px 20px; font-weight: 500; transition: 0.2s; }
+        .nav-link:hover, .nav-link.active { background-color: rgba(255, 87, 34, 0.1); color: #ff5722; border-left: 4px solid #ff5722; }
+
+        .text-hot { color: #ff5722; }
+        .table-hover tbody tr:hover { background-color: rgba(255, 87, 34, 0.05); }
+        .avatar-sm { width: 40px; height: 40px; object-fit: cover; border-radius: 50%; }
+        
+        /* Làm đẹp cái khung chứa Checkbox */
+        .role-checkbox-box { max-height: 120px; overflow-y: auto; border: 1px solid var(--bs-border-color); border-radius: 0.375rem; padding: 10px; background-color: var(--bs-body-bg); }
+    </style>
+</head>
+<body>
+
+    <div id="wrapper">
+        <!-- Nhúng Sidebar -->
+        <div th:replace="~{fragments/admin_sidebar :: sidebar}"></div>
+
+        <div id="content-wrapper">
+            <!-- Nhúng Topbar -->
+            <div th:replace="~{fragments/admin_topbar :: topbar}"></div>
+
+            <!-- NỘI DUNG CHÍNH -->
+            <div class="container-fluid p-4">
+
+                <!-- Thanh công cụ -->
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h3 class="fw-bold m-0"><i class="bi bi-people-fill text-hot"></i> Quản Lý Tài Khoản</h3>
+
+                    <div class="d-flex gap-2">
+                        <form th:action="@{/admin/quan-ly-tai-khoan/tim-kiem}" method="GET" class="d-flex">
+                            <input class="form-control" name="search" type="search" th:value="${tuKhoa}" placeholder="Tìm username hoặc họ tên...">
+                            <button class="btn btn-outline-info ms-2" type="submit"><i class="bi bi-search"></i></button>
+                        </form>
+                        <!-- Nút Mở Modal Thêm -->
+                        <button class="btn btn-danger fw-bold" data-bs-toggle="modal" data-bs-target="#modalThemTaiKhoan">
+                            <i class="bi bi-person-plus-fill"></i> Cấp Tài Khoản
+                        </button>
+                    </div>
+                </div>
+
+                <!-- BẢNG DỮ LIỆU -->
+                <div class="card bg-body-tertiary border-0 shadow-sm rounded-4">
+                    <div class="card-body p-0 table-responsive">
+                        <table th:if="${not #lists.isEmpty(danhSachTaiKhoan)}" class="table table-hover align-middle mb-0">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th class="ps-4">ID</th>
+                                    <th>Người Dùng</th>
+                                    <th>Liên Hệ</th>
+                                    <th>Vai Trò</th>
+                                    <th>Trạng Thái</th>
+                                    <th class="text-center">Hành Động</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="tk : ${danhSachTaiKhoan}">
+                                    <td class="ps-4 fw-bold" th:text="${tk.id}">1</td>
+
+                                    <!-- Cột Người Dùng (Gộp Avatar + Họ tên + Username) -->
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <img th:src="@{'/images/avatar/' + ${tk.avatar != null ? tk.avatar : 'default.jpg'}}" class="avatar-sm me-3" alt="Avatar">
+                                            <div>
+                                                <div class="fw-bold text-info" th:text="${tk.hoTen}">Tên User</div>
+                                                <small class="text-muted" th:text="'@' + ${tk.username}">@username</small>
+                                            </div>
+                                        </div>
+                                    </td>
+
+                                    <td th:text="${tk.email}">email@domain.com</td>
+
+                                    <!-- CỘT VAI TRÒ (Đã nâng cấp vòng lặp List) -->
+                                    <td>
+                                        <span th:each="vt : ${tk.danhSachVaiTro}" 
+                                              class="badge me-1 mb-1"
+                                              th:classappend="${vt.tenVaiTro == 'ADMIN' ? 'bg-danger' : 'bg-primary'}"
+                                              th:text="${vt.tenVaiTro}">
+                                        </span>
+                                        <span th:if="${#lists.isEmpty(tk.danhSachVaiTro)}" class="badge bg-secondary">CHƯA CẤP QUYỀN</span>
+                                    </td>
+
+                                    <!-- Cột Trạng Thái -->
+                                    <td>
+                                        <span class="badge bg-success" th:if="${tk.trangThai == 1}"><i class="bi bi-check-circle"></i> Hoạt động</span>
+                                        <span class="badge bg-secondary" th:if="${tk.trangThai == 0}"><i class="bi bi-lock-fill"></i> Đã Khóa</span>
+                                    </td>
+
+                                    <td class="text-center">
+                                        <!-- Nút Sửa -->
+                                        <button class="btn btn-sm btn-outline-warning mx-1" data-bs-toggle="modal" th:attr="data-bs-target='#modalSuaTaiKhoan_' + ${tk.id}" title="Phân Quyền / Khóa"><i class="bi bi-pencil-square"></i></button>
+                                        <!-- Nút Xóa -->
+                                        <button class="btn btn-sm btn-outline-danger" data-bs-toggle="modal" th:attr="data-bs-target='#modalXoaTaiKhoan_' + ${tk.id}" title="Xóa Vĩnh Viễn"><i class="bi bi-trash"></i></button>
+                                    </td>
+
+                                    <!-- MODAL SỬA TÀI KHOẢN -->
+                                    <div class="modal fade" th:id="'modalSuaTaiKhoan_' + ${tk.id}" tabindex="-1">
+                                        <div class="modal-dialog modal-dialog-centered">
+                                            <div class="modal-content bg-body-tertiary">
+                                                <form th:action="@{/admin/quan-ly-tai-khoan/sua-tai-khoan}" method="POST">
+                                                    <input type="hidden" name="id" th:value="${tk.id}">
+
+                                                    <input type="hidden" name="username" th:value="${tk.username}">
+                                                    <input type="hidden" name="password" th:value="${tk.password}">
+                                                    <input type="hidden" name="avatar" th:value="${tk.avatar}">
+
+                                                    <div class="modal-header border-bottom border-warning">
+                                                        <h5 class="modal-title fw-bold text-warning"><i class="bi bi-gear-fill"></i> Thiết Lập Tài Khoản: [[${tk.username}]]</h5>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                                    </div>
+                                                    <div class="modal-body text-start">
+                                                        <div class="row">
+                                                            <div class="col-md-6 mb-3">
+                                                                <label class="form-label fw-bold">Họ Tên</label>
+                                                                <input type="text" class="form-control" name="hoTen" th:value="${tk.hoTen}" required>
+                                                            </div>
+                                                            <div class="col-md-6 mb-3">
+                                                                <label class="form-label fw-bold">Email</label>
+                                                                <input type="email" class="form-control" name="email" th:value="${tk.email}" required>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="row">
+                                                            <!-- CHỖ NÀY ĐÃ ĐỔI THÀNH DANH SÁCH CHECKBOX -->
+                                                            <div class="col-md-6 mb-3">
+                                                                <label class="form-label fw-bold text-info">Cấp Vai Trò</label>
+                                                                <div class="role-checkbox-box">
+                                                                    <div class="form-check" th:each="role : ${danhSachTatCaVaiTro}">
+                                                                        <!-- tk.hasRole() là cái hàm Java nãy anh em mình vừa viết đó -->
+                                                                        <input class="form-check-input" type="checkbox" name="vaiTroIds" 
+                                                                               th:value="${role.id}" 
+                                                                               th:checked="${tk.hasRole(role.tenVaiTro)}">
+                                                                        <label class="form-check-label" th:text="${role.tenVaiTro}"></label>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
+                                                            <!-- COMBOBOX TRẠNG THÁI -->
+                                                            <div class="col-md-6 mb-3">
+                                                                <label class="form-label fw-bold text-danger">Trạng Thái</label>
+                                                                <select class="form-select" name="trangThai">
+                                                                    <option value="1" th:selected="${tk.trangThai == 1}">Mở khóa (Hoạt động)</option>
+                                                                    <option value="0" th:selected="${tk.trangThai == 0}">Khóa tài khoản</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="modal-footer border-top">
+                                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                                                        <button type="submit" class="btn btn-warning fw-bold text-dark"><i class="bi bi-save"></i> Cập Nhật</button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- MODAL XÓA TÀI KHOẢN (Giữ nguyên) -->
+                                    <div class="modal fade" th:id="'modalXoaTaiKhoan_' + ${tk.id}" tabindex="-1">
+                                        <div class="modal-dialog modal-dialog-centered">
+                                            <div class="modal-content bg-body-tertiary">
+                                                <div class="modal-header border-bottom border-danger">
+                                                    <h5 class="modal-title fw-bold text-danger"><i class="bi bi-exclamation-triangle"></i> Xác nhận xóa</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                                </div>
+                                                <div class="modal-body text-start">
+                                                    Việc xóa tài khoản <strong class="text-info">[[${tk.username}]]</strong> có thể làm mất dữ liệu bình luận của họ. <br>
+                                                    <strong>Khuyên dùng:</strong> Nên sử dụng chức năng <span class="text-warning">Khóa tài khoản</span> thay vì xóa. <br><br>
+                                                    Bạn vẫn chắc chắn muốn xóa vĩnh viễn?
+                                                </div>
+                                                <div class="modal-footer border-top">
+                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                                                    <a th:href="@{/admin/quan-ly-tai-khoan/xoa-tai-khoan/{id}(id=${tk.id})}" class="btn btn-danger fw-bold">Xác nhận Xóa</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <!-- Báo rỗng -->
+                        <div th:if="${#lists.isEmpty(danhSachTaiKhoan)}" class="text-center p-5">
+                            <i class="bi bi-person-x display-1 text-secondary opacity-50 mb-3 d-block"></i>
+                            <h4 class="fw-bold">Chưa có tài khoản nào!</h4>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Phân trang -->
+                <div th:if="${not #lists.isEmpty(danhSachTaiKhoan) and tongSoTrang != null}" class="mt-4 d-flex justify-content-center">
+                    <div th:replace="~{fragments/phan_trang :: phantrang(
+                            duongDan='/admin/quan-ly-tai-khoan', 
+                            trangHienTai=${trangHienTai}, 
+                            tongSoTrang=${tongSoTrang}
+                    )}"></div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= MODAL THÊM TÀI KHOẢN ================= -->
+    <div class="modal fade" id="modalThemTaiKhoan" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content bg-body-tertiary">
+                <form th:action="@{/admin/quan-ly-tai-khoan/them-tai-khoan}" method="POST">
+
+                    <div class="modal-header border-bottom border-danger">
+                        <h5 class="modal-title fw-bold text-hot"><i class="bi bi-person-plus-fill"></i> Cấp Tài Khoản Mới</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <!-- Tui đã bỏ cái <input type="hidden" name="vaiTro"> đi rồi nha vì Controller tự add quyền USER -->
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Username (Tài khoản đăng nhập) <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" name="username" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Mật khẩu <span class="text-danger">*</span></label>
+                            <input type="password" class="form-control" name="password" required>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-bold">Họ Tên Hiển Thị</label>
+                                <input type="text" class="form-control" name="hoTen" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-bold">Email</label>
+                                <input type="email" class="form-control" name="email" required>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer border-top">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                        <button type="submit" class="btn btn-danger fw-bold"><i class="bi bi-save"></i> Thêm Mới</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= KHU VỰC THÔNG BÁO (TOAST) ================= -->
+    <div th:if="${thongbao}" class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 1055;">
+        <div id="thongBaoToast" class="toast align-items-center text-bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="d-flex">
+                <div class="toast-body fw-bold">
+                    <i class="bi bi-check-circle-fill me-2"></i>
+                    <span th:text="${thongbao}"></span>
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+            </div>
+        </div>
+    </div>
+
+    <div th:if="${loi}" class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 1055;">
+        <div id="loiToast" class="toast align-items-center text-bg-danger border-0" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="d-flex">
+                <div class="toast-body fw-bold">
+                    <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                    <span th:text="${loi}"></span>
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script th:src="@{/user/js/doi_mau.js}"></script>
+
+    <script>
+        document.getElementById('sidebarCollapse').addEventListener('click', function () {
+            document.getElementById('sidebar').classList.toggle('toggled');
+        });
+
+        document.addEventListener("DOMContentLoaded", function() {
+            const tbElement = document.getElementById('thongBaoToast');
+            if(tbElement) new bootstrap.Toast(tbElement, { delay: 4000 }).show();
+
+            const loiElement = document.getElementById('loiToast');
+            if(loiElement) new bootstrap.Toast(loiElement, { delay: 4000 }).show();
+        });
+    </script>
+</body>
+</html>

@@ -77,4 +77,9 @@ public class ChuongService {
     {
         return repoChuong.findById(id).orElse(null);
     }
+
+    public boolean kiemTraTrungSoChuong(int truyenId, int soChuong)
+    {
+        return repoChuong.existsByTruyenIdAndSoChuong(truyenId, soChuong);
+    }
 }

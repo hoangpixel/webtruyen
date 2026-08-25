@@ -1,9 +1,14 @@
 package com.flogin.webtruyen.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.flogin.webtruyen.model.TaiKhoan;
+import com.flogin.webtruyen.model.TheLoai;
 import com.flogin.webtruyen.repository.TaiKhoanRepository;
 
 import java.security.MessageDigest;
@@ -13,6 +18,20 @@ import java.util.Base64;
 public class TaiKhoanService {
     @Autowired
     TaiKhoanRepository repo;
+
+    public Page<TaiKhoan> layDanhSachTheoPhanTrang(int trangHienTai, int size)
+    {
+        Sort sapXepMoiNhat = Sort.by(Sort.Direction.DESC, "id");
+        Pageable pageable = PageRequest.of(trangHienTai - 1, size, sapXepMoiNhat);
+        return repo.findAll(pageable);
+    }
+
+    
+    public Page<TaiKhoan> timKiemCoBan(int trangHienTai, int size, String username)
+    {
+        Pageable pageble = PageRequest.of(trangHienTai - 1, size);
+        return repo.findByUsernameContainingOrderByIdDesc(username, pageble);
+    }
 
     public boolean kiemTraTaiKhoan(String username, String password) 
     {
@@ -58,6 +77,7 @@ public class TaiKhoanService {
             String hashedPass = maHoaMatKhau(tk.getPassword());
             tk.setPassword(hashedPass);
             tk.setAvatar("default.jpg");
+            tk.setTrangThai(1);
             repo.save(tk);
             return true;
         }
@@ -91,5 +111,20 @@ public class TaiKhoanService {
     public TaiKhoan layThongTinTaiKhoan(String username)
     {
         return repo.findByUsername(username);
+    }
+
+    public TaiKhoan layThongTinTaiKhoanTheoId(int id)
+    {
+        return repo.findById(id).orElse(null);
+    }
+
+    public boolean xoaTaiKhoan(TaiKhoan tk)
+    {
+        if(tk != null)
+        {
+            repo.delete(tk);
+            return true;
+        }
+        return false;
     }
 }

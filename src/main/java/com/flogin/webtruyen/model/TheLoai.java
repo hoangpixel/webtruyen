@@ -16,4 +16,7 @@ public class TheLoai {
 
     @ManyToMany(mappedBy = "danhSachTheLoai")
     private List<Truyen> danhSachTruyen;
+
+    @Column(columnDefinition = "TEXT")
+    private String moTa;
 }

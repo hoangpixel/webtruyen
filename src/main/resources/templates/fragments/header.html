@@ -28,7 +28,7 @@
 
                     <li class="nav-item dropdown ms-3" th:if="${session.nguoiDung != null}">
                         <a class="nav-link text-info fw-bold d-flex align-items-center" href="#" role="button">
-                            <img th:src="@{|/images/${session.avatar}|}" class="rounded-circle me-2" alt="Avatar" style="width: 35px; height: 35px; object-fit: cover;"> 
+                            <img th:src="@{|/images/avatar/${session.avatar}|}" class="rounded-circle me-2" alt="Avatar" style="width: 35px; height: 35px; object-fit: cover;"> 
                             <span th:text="${session.nguoiDung}"></span>
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end shadow border-0" style="background-color: var(--bs-body-bg);">

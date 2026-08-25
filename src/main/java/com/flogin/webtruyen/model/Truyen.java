@@ -27,7 +27,6 @@ public class Truyen {
     private int tongSoDanhGia;
     private int luotXem;
 
-    // Quan hệ Nhiều-Nhiều với Thể Loại (Sinh ra bảng phụ truyen_the_loai)
     @ManyToMany
     @JoinTable(
         name = "truyen_the_loai",
@@ -37,6 +36,7 @@ public class Truyen {
     private List<TheLoai> danhSachTheLoai;
 
     @OneToMany(mappedBy = "truyen", cascade = CascadeType.ALL)
+    @OrderBy("soChuong DESC")
     private List<Chuong> danhSachChuong;
 
     @Transient

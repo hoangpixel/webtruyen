@@ -4,6 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
 import com.flogin.webtruyen.model.TaiKhoan;
+import com.flogin.webtruyen.model.VaiTro;
+import com.flogin.webtruyen.repository.VaiTroRepository;
 import com.flogin.webtruyen.service.TaiKhoanService;
 
 import org.springframework.ui.Model;
@@ -22,6 +24,9 @@ public class UserLoginController {
     @Autowired
     TaiKhoanService bus;
 
+    @Autowired
+    VaiTroRepository repoVaiTro;
+
     @GetMapping("/login-user")
     public String login() {
         return "user/login_user";
@@ -35,7 +40,7 @@ public class UserLoginController {
         {
             TaiKhoan tk = bus.layTaiKhoan(username, password);
             session.setAttribute("nguoiDung", tk.getUsername());
-            session.setAttribute("vaiTro", tk.getVaiTro());
+            session.setAttribute("vaiTro", tk.getChucVuString());
             session.setAttribute("avatar", tk.getAvatar());
             return "redirect:/";
         }
@@ -80,7 +85,12 @@ public class UserLoginController {
         tk.setEmail(email);
         tk.setUsername(username);
         tk.setPassword(password);
-        tk.setVaiTro("user");
+
+        VaiTro roleUser = repoVaiTro.findByTenVaiTro("USER");
+        if(roleUser != null) 
+        {
+            tk.setDanhSachVaiTro(java.util.List.of(roleUser)); 
+        }
 
         bus.themTaiKhoan(tk);
         

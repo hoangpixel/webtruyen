@@ -168,7 +168,7 @@
                     <!-- Sửa lại check rỗng bằng #lists.isEmpty() -->
                     <div th:if="${not #lists.isEmpty(danhSachBinhLuan)}" class="d-flex mb-3" th:each="bl : ${danhSachBinhLuan}">
                         <!-- Lấy avatar của chủ nhân bình luận (Giả sử bảng TaiKhoan có cột avatar) -->
-                        <img th:src="@{'/images/' + ${bl.taiKhoan.avatar != null ? bl.taiKhoan.avatar : 'default-avatar.png'}}" class="rounded-circle me-2" alt="Avatar" width="40" height="40" style="object-fit: cover;">
+                        <img th:src="@{'/images/avatar/' + ${bl.taiKhoan.avatar != null ? bl.taiKhoan.avatar : 'default-avatar.png'}}" class="rounded-circle me-2" alt="Avatar" width="40" height="40" style="object-fit: cover;">
                         <div>
                             <!-- Lấy tên của chủ nhân bình luận -->
                             <strong class="text-warning" th:text="${bl.taiKhoan.hoTen}">Tên User</strong> 

@@ -45,7 +45,6 @@ public class UserController {
         tk.setEmail(email);
         tk.setPassword(password);
         tk.setUsername(username);
-        tk.setVaiTro("user");
         
         if(tk != null)
         {
@@ -55,7 +54,7 @@ public class UserController {
                 if(!file.isEmpty() && file != null)
                 {
                     String tenFile = file.getOriginalFilename();
-                    Path duongDan = Paths.get("src/main/resources/static/images/" + tenFile);
+                    Path duongDan = Paths.get("src/main/resources/static/images/avatar/" + tenFile);
                     Files.copy(file.getInputStream(), duongDan, StandardCopyOption.REPLACE_EXISTING);
                     tk.setAvatar(tenFile);
                     tenAnhMoi = tenFile;

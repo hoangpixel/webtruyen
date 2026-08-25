@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" data-bs-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản Lý Thể Loại - Sở Chỉ Huy</title>
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    
+    <style>
+        #wrapper { display: flex; width: 100%; overflow-x: hidden; }
+        #sidebar { min-width: 260px; max-width: 260px; min-height: 100vh; background-color: var(--bs-tertiary-bg); transition: all 0.3s; }
+        #sidebar.toggled { margin-left: -260px; }
+        #content-wrapper { width: 100%; transition: all 0.3s; }
+        .text-hot { color: #ff5722; }
+        .table-hover tbody tr:hover { background-color: rgba(255, 87, 34, 0.05); }
+        .nav-link { color: var(--bs-body-color); padding: 15px 20px; font-weight: 500; transition: 0.2s; }
+        .nav-link:hover, .nav-link.active { background-color: rgba(255, 87, 34, 0.1); color: #ff5722; border-left: 4px solid #ff5722; }
+    </style>
+</head>
+<body>
+
+    <div id="wrapper">
+        <!-- Nhúng Sidebar -->
+        <div th:replace="~{fragments/admin_sidebar :: sidebar}"></div>
+
+        <div id="content-wrapper">
+            <!-- Nhúng Topbar -->
+            <div th:replace="~{fragments/admin_topbar :: topbar}"></div>
+
+            <!-- NỘI DUNG CHÍNH -->
+            <div class="container-fluid p-4">
+                
+                <!-- Thanh công cụ -->
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h3 class="fw-bold m-0"><i class="bi bi-tags-fill text-hot"></i> Quản Lý Thể Loại</h3>
+                    
+                    <div class="d-flex gap-2">
+                        <form th:action="@{/admin/quan-ly-the-loai/tim-kiem}" method="GET" class="d-flex">
+                            <input class="form-control" name="search" type="search" th:value="${tuKhoa}" placeholder="Tìm thể loại...">
+                            <button class="btn btn-outline-info ms-2" type="submit"><i class="bi bi-search"></i></button>
+                        </form>
+                        <!-- Nút Mở Modal Thêm -->
+                        <button class="btn btn-danger fw-bold" data-bs-toggle="modal" data-bs-target="#modalThemTheLoai">
+                            <i class="bi bi-plus-lg"></i> Thêm Thể Loại
+                        </button>
+                    </div>
+                </div>
+
+                <!-- BẢNG DỮ LIỆU -->
+                <div class="card bg-body-tertiary border-0 shadow-sm rounded-4">
+                    <div class="card-body p-0 table-responsive">
+                        <table th:if="${not #lists.isEmpty(danhSachTheLoai)}" class="table table-hover align-middle mb-0">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th class="ps-4" style="width: 10%;">ID</th>
+                                    <th style="width: 25%;">Tên Thể Loại</th>
+                                    <th style="width: 50%;">Mô Tả</th>
+                                    <th class="text-center" style="width: 15%;">Hành Động</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="tl : ${danhSachTheLoai}">
+                                    <td class="ps-4 fw-bold" th:text="${tl.id}">1</td>
+                                    <td class="fw-bold text-info" th:text="${tl.tenTheLoai}">Tiên Hiệp</td>
+                                    <td class="text-muted text-truncate" style="max-width: 300px;" th:text="${tl.moTa}">Bối cảnh tu đạo, cầu trường sinh...</td>
+                                    <td class="text-center">
+                                        <!-- Nút Sửa -->
+                                        <button class="btn btn-sm btn-outline-warning mx-1" data-bs-toggle="modal" th:attr="data-bs-target='#modalSuaTheLoai_' + ${tl.id}" title="Sửa"><i class="bi bi-pencil-square"></i></button>
+                                        <!-- Nút Xóa -->
+                                        <button class="btn btn-sm btn-outline-danger" data-bs-toggle="modal" th:attr="data-bs-target='#modalXoaTheLoai_' + ${tl.id}" title="Xóa"><i class="bi bi-trash"></i></button>
+                                    </td>
+
+                                    <!-- MODAL SỬA THỂ LOẠI (Nằm ngay trong vòng lặp) -->
+                                    <div class="modal fade" th:id="'modalSuaTheLoai_' + ${tl.id}" tabindex="-1">
+                                        <div class="modal-dialog modal-dialog-centered">
+                                            <div class="modal-content bg-body-tertiary">
+                                                <form th:action="@{/admin/quan-ly-the-loai/sua-the-loai}" method="POST">
+                                                    <input type="hidden" name="id" th:value="${tl.id}">
+                                                    <div class="modal-header border-bottom border-warning">
+                                                        <h5 class="modal-title fw-bold text-warning"><i class="bi bi-pencil-square"></i> Cập Nhật Thể Loại</h5>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                                    </div>
+                                                    <div class="modal-body text-start">
+                                                        <div class="mb-3">
+                                                            <label class="form-label fw-bold">Tên Thể Loại</label>
+                                                            <input type="text" class="form-control" name="tenTheLoai" th:value="${tl.tenTheLoai}" required>
+                                                        </div>
+                                                        <div class="mb-3">
+                                                            <label class="form-label fw-bold">Mô Tả</label>
+                                                            <textarea class="form-control" name="moTa" rows="4" th:text="${tl.moTa}"></textarea>
+                                                        </div>
+                                                    </div>
+                                                    <div class="modal-footer border-top">
+                                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                                                        <button type="submit" class="btn btn-warning fw-bold text-dark"><i class="bi bi-save"></i> Lưu Thay Đổi</button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- MODAL XÓA THỂ LOẠI -->
+                                    <div class="modal fade" th:id="'modalXoaTheLoai_' + ${tl.id}" tabindex="-1">
+                                        <div class="modal-dialog modal-dialog-centered">
+                                            <div class="modal-content bg-body-tertiary">
+                                                <div class="modal-header border-bottom border-danger">
+                                                    <h5 class="modal-title fw-bold text-danger"><i class="bi bi-exclamation-triangle"></i> Xác nhận xóa</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                                </div>
+                                                <div class="modal-body text-start">
+                                                    Bạn có chắc chắn muốn xóa thể loại <strong class="text-info">[[${tl.tenTheLoai}]]</strong> không?
+                                                </div>
+                                                <div class="modal-footer border-top">
+                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                                                    <a th:href="@{/admin/quan-ly-the-loai/xoa-the-loai/{id}(id=${tl.id})}" class="btn btn-danger fw-bold">Xác nhận Xóa</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <!-- Báo rỗng -->
+                        <div th:if="${#lists.isEmpty(danhSachTheLoai)}" class="text-center p-5">
+                            <i class="bi bi-tags display-1 text-secondary opacity-50 mb-3 d-block"></i>
+                            <h4 class="fw-bold">Chưa có thể loại nào!</h4>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Phân trang (Nếu ông có dùng) -->
+                <div th:if="${not #lists.isEmpty(danhSachTheLoai) and tongSoTrang != null}" class="mt-4 d-flex justify-content-center">
+                    <div th:replace="~{fragments/phan_trang :: phantrang(
+                            duongDan='/admin/quan-ly-the-loai', 
+                            trangHienTai=${trangHienTai}, 
+                            tongSoTrang=${tongSoTrang}
+                    )}"></div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= MODAL THÊM THỂ LOẠI MỚI ================= -->
+    <div class="modal fade" id="modalThemTheLoai" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content bg-body-tertiary">
+                <form th:action="@{/admin/quan-ly-the-loai/them-the-loai}" method="POST">
+                    <div class="modal-header border-bottom border-danger">
+                        <h5 class="modal-title fw-bold text-hot"><i class="bi bi-node-plus-fill"></i> Thêm Thể Loại Mới</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Tên Thể Loại <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" name="tenTheLoai" placeholder="VD: Tiên Hiệp, Kiếm Hiệp..." required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Mô Tả (Tùy chọn)</label>
+                            <textarea class="form-control" name="moTa" rows="4" placeholder="Nhập mô tả cho thể loại này..."></textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer border-top">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                        <button type="submit" class="btn btn-danger fw-bold"><i class="bi bi-save"></i> Thêm Mới</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= KHU VỰC THÔNG BÁO (TOAST) ================= -->
+    <div th:if="${thongbao}" class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 1055;">
+        <div id="thongBaoToast" class="toast align-items-center text-bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="d-flex">
+                <div class="toast-body fw-bold">
+                    <i class="bi bi-check-circle-fill me-2"></i>
+                    <span th:text="${thongbao}"></span>
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+            </div>
+        </div>
+    </div>
+
+    <div th:if="${loi}" class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 1055;">
+        <div id="loiToast" class="toast align-items-center text-bg-danger border-0" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="d-flex">
+                <div class="toast-body fw-bold">
+                    <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                    <span th:text="${loi}"></span>
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script th:src="@{/user/js/doi_mau.js}"></script>
+
+    <script>
+        // JS Mở Sidebar
+        document.getElementById('sidebarCollapse').addEventListener('click', function () {
+            document.getElementById('sidebar').classList.toggle('toggled');
+        });
+
+        // Bật Toast thông báo tự động
+        document.addEventListener("DOMContentLoaded", function() {
+            const tbElement = document.getElementById('thongBaoToast');
+            if(tbElement) new bootstrap.Toast(tbElement, { delay: 4000 }).show();
+            
+            const loiElement = document.getElementById('loiToast');
+            if(loiElement) new bootstrap.Toast(loiElement, { delay: 4000 }).show();
+        });
+    </script>
+</body>
+</html>

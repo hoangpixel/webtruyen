@@ -1,6 +1,8 @@
 package com.flogin.webtruyen.repository;
 
 import org.springframework.stereotype.Repository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.flogin.webtruyen.model.TaiKhoan;
@@ -17,4 +19,6 @@ public interface TaiKhoanRepository extends JpaRepository<TaiKhoan, Integer> {
     boolean existsByEmail(String email);
 
     TaiKhoan findByUsername(String username);
+
+    Page<TaiKhoan> findByUsernameContainingOrderByIdDesc(String username, Pageable pageAble);
 }

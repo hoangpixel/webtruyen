@@ -1,23 +1,53 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <body>
-    <!-- Đặt tên fragment là sidebar -->
     <nav th:fragment="sidebar" id="sidebar" class="shadow-sm">
         <div class="sidebar-header p-4 border-bottom text-center">
             <h4 class="text-hot m-0 fw-bold"><i class="bi bi-shield-lock-fill"></i> ADMIN</h4>
         </div>
         
         <ul class="list-unstyled mt-3">
-            <!-- Sau này mình sẽ dùng Thymeleaf để làm sáng cái Tab đang được chọn lên -->
-            <li><a th:href="@{/admin}" class="nav-link"><i class="bi bi-speedometer2 me-3"></i>Tổng Quan</a></li>
-            <li><a th:href="@{/admin/quan-ly-truyen}" class="nav-link"><i class="bi bi-book me-3"></i>Quản Lý Truyện</a></li>
-            <li><a th:href="@{/admin/quan-ly-chuong}" class="nav-link"><i class="bi bi-list-ol me-3"></i>Quản Lý Chương</a></li>
-            <li><a th:href="@{/admin/quan-ly-the-loai}" class="nav-link"><i class="bi bi-tags me-3"></i>Quản Lý Thể Loại</a></li>
-            <li><a th:href="@{/admin/quan-ly-nguoi-dung}" class="nav-link"><i class="bi bi-people me-3"></i>Quản Lý User</a></li>
-            <li><a th:href="@{/admin/quan-ly-danh-gia}" class="nav-link"><i class="bi bi-star me-3"></i>Quản Lý Đánh Giá</a></li>
+            <!-- Đã đổi sang dùng biến ${requestURI} -->
+            <li>
+                <a th:href="@{/admin}" th:classappend="${requestURI == '/admin' ? 'active' : ''}" class="nav-link">
+                    <i class="bi bi-speedometer2 me-3"></i>Tổng Quan
+                </a>
+            </li>
+            <li>
+                <a th:href="@{/admin/quan-ly-truyen}" th:classappend="${requestURI.startsWith('/admin/quan-ly-truyen') ? 'active' : ''}" class="nav-link">
+                    <i class="bi bi-book me-3"></i>Quản Lý Truyện
+                </a>
+            </li>
+            <li>
+                <a th:href="@{/admin/quan-ly-chuong}" th:classappend="${requestURI.startsWith('/admin/quan-ly-chuong') ? 'active' : ''}" class="nav-link">
+                    <i class="bi bi-list-ol me-3"></i>Quản Lý Chương
+                </a>
+            </li>
+            <li>
+                <a th:href="@{/admin/quan-ly-the-loai}" th:classappend="${requestURI.startsWith('/admin/quan-ly-the-loai') ? 'active' : ''}" class="nav-link">
+                    <i class="bi bi-tags me-3"></i>Quản Lý Thể Loại
+                </a>
+            </li>
+            <li>
+                <a th:href="@{/admin/quan-ly-tai-khoan}" th:classappend="${requestURI.startsWith('/admin/quan-ly-tai-khoan') ? 'active' : ''}" class="nav-link">
+                    <i class="bi bi-people me-3"></i>Quản Lý Tài Khoản
+                </a>
+            </li>
+            <li>
+                <a th:href="@{/admin/quan-ly-vai-tro}" th:classappend="${requestURI.startsWith('/admin/quan-ly-vai-tro') ? 'active' : ''}" class="nav-link">
+                    <i class="bi bi-people me-3"></i>Quản Lý Vai Trò
+                </a>
+            </li>
+            <li>
+                <a th:href="@{/admin/quan-ly-danh-gia}" th:classappend="${requestURI.startsWith('/admin/quan-ly-danh-gia') ? 'active' : ''}" class="nav-link">
+                    <i class="bi bi-star me-3"></i>Quản Lý Đánh Giá
+                </a>
+            </li>
             
             <li class="mt-5 border-top pt-3">
-                <a th:href="@{/logout}" class="nav-link text-danger"><i class="bi bi-box-arrow-left me-3"></i>Đăng Xuất</a>
+                <a th:href="@{/logout}" class="nav-link text-danger">
+                    <i class="bi bi-box-arrow-left me-3"></i>Đăng Xuất
+                </a>
             </li>
         </ul>
     </nav>
