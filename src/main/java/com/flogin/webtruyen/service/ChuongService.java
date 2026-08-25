@@ -3,7 +3,11 @@ package com.flogin.webtruyen.service;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.data.domain.Pageable;
 
 import com.flogin.webtruyen.model.Chuong;
 import com.flogin.webtruyen.model.Truyen;
@@ -13,6 +17,13 @@ import com.flogin.webtruyen.repository.ChuongRepository;
 public class ChuongService {
     @Autowired
     ChuongRepository repoChuong;
+
+    public Page<Chuong> layDanhSachCoPhanTrang(int trangHienTai, int size)
+    {
+        Sort sapXepMoiNhat = Sort.by(Sort.Direction.DESC, "id");
+        Pageable pageable = PageRequest.of(trangHienTai - 1, size, sapXepMoiNhat);
+        return repoChuong.findAll(pageable);
+    }
 
     public List<Chuong> layDanhSachChuongTheoTruyen(Truyen truyen)
     {
@@ -30,5 +41,40 @@ public class ChuongService {
             chuong.setLuotXem(chuong.getLuotXem() + 1);
             repoChuong.save(chuong);
         }
+    }
+
+    public boolean themChuong(Chuong chuong)
+    {
+        if(chuong != null)
+        {
+            repoChuong.save(chuong);
+            return true;
+        }
+        return false;
+    }
+
+    public boolean suaChuong(Chuong chuong)
+    {
+        if(chuong != null)
+        {
+            repoChuong.save(chuong);
+            return true;
+        }
+        return false;
+    }
+
+    public boolean xoaChuong(Chuong chuong)
+    {
+        if(chuong != null)
+        {
+            repoChuong.delete(chuong);
+            return true;
+        }
+        return false;
+    }
+
+    public Chuong layThongTinChuong(int id)
+    {
+        return repoChuong.findById(id).orElse(null);
     }
 }

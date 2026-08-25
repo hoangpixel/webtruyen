@@ -50,6 +50,7 @@ public class AdminLoginController {
 
     @GetMapping("/logout")
     public String dangXuatAdmin(HttpSession session) {
+        session.invalidate();
         session.removeAttribute("adminLog");
         session.removeAttribute("adminAvatar");
         session.removeAttribute("adminVaiTro");

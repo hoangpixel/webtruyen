@@ -31,7 +31,7 @@ public class AdminTruyenController {
     @GetMapping({"", "/"})
     public String loadDanhSachTruyen(@RequestParam(name="page", defaultValue = "1") int page, Model model) {
         
-        int tongSoSanPham = 10;
+        int tongSoSanPham = 2;
         Page<Truyen> pageAble = busTruyen.layDanhSachTheoPhanTrang(page, tongSoSanPham);
 
         model.addAttribute("danhSachTruyen", pageAble.getContent());
@@ -40,6 +40,21 @@ public class AdminTruyenController {
 
         return "admin/truyen_admin";
     }
+
+    @GetMapping("/tim-kiem")
+    public String timKiemCoBan(@RequestParam(name="page", defaultValue = "1") int page,@RequestParam("search") String tuKhoa, Model model) {
+        int tongSoSanPham = 2;
+        Page<Truyen> pageAble = busTruyen.timKiemCoBan(page, tongSoSanPham, tuKhoa);
+
+        model.addAttribute("danhSachTruyen", pageAble.getContent());
+        model.addAttribute("trangHienTai", page);
+        model.addAttribute("tongSoTrang", pageAble.getTotalPages());
+
+        model.addAttribute("tuKhoa", tuKhoa);
+
+        return "admin/truyen_admin";
+    }
+    
 
     @PostMapping("/them-truyen")
     public String xuLyThemTruyen(@ModelAttribute Truyen truyen, @RequestParam("fileAnh") MultipartFile file, RedirectAttributes redirectAttributes) {
@@ -66,17 +81,15 @@ public class AdminTruyenController {
         return "redirect:/admin/quan-ly-truyen";
     }
 
-@GetMapping("/xoa-truyen/{id}")
+    @GetMapping("/xoa-truyen/{id}")
     public String xuLyXoaTruyen(@PathVariable("id") int id, RedirectAttributes redirectAttributes) {
         try {
             Truyen truyen = busTruyen.layThongTinTruyen(id);
             if(truyen != null) {
                 busTruyen.xoaTruyen(truyen);
-                // Xóa trót lọt
                 redirectAttributes.addFlashAttribute("thongbao", "Đã xóa thành công truyện có ID: " + id);
             }
         } catch (Exception e) {
-            // Bị vướng khóa ngoại (có chương) thì nó nhảy vào đây
             redirectAttributes.addFlashAttribute("loi", "Không thể xóa! Chân kinh này đang chứa các chương bên trong.");
         }
         return "redirect:/admin/quan-ly-truyen";

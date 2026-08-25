@@ -14,16 +14,14 @@
     
     <style>
         .text-hot { color: #ff5722; font-weight: bold; }
-        /* Tối ưu hóa vùng đọc truyện */
         .comic-page {
             width: 100%;
-            max-width: 800px; /* Giới hạn độ rộng để đọc trên PC không bị mỏi cổ */
+            max-width: 800px;
             display: block;
             margin: 0 auto;
-            border-bottom: 2px solid #000; /* Phân cách giữa các trang */
+            border-bottom: 2px solid #000;
         }
         
-        /* Chỉnh lại giao diện của Select2 cho hợp với Dark Mode */
         .select2-container--default .select2-selection--single {
             background-color: var(--bs-body-bg);
             border: 1px solid #6c757d;
@@ -47,11 +45,9 @@
 
     <div th:replace="~{fragments/header :: navbar}"></div>
 
-<!-- THANH CÔNG CỤ ĐỌC TRUYỆN (STICKY HEADER) -->
     <div class="sticky-top shadow-sm py-2" style="background-color: var(--bs-tertiary-bg);">
         <div class="container d-flex justify-content-center align-items-center gap-2">
             
-            <!-- Nút Lùi Chương -->
             <a th:if="${chuongTruoc != null}" 
                th:href="@{/doc-truyen/{slug}/{idTruyen}/{idChuong}(slug=${truyen.slug}, idTruyen=${truyen.id}, idChuong=${chuongTruoc.id})}" 
                class="btn btn-outline-danger">
@@ -61,9 +57,7 @@
                <i class="bi bi-chevron-left"></i> Chap Trước
             </button>
             
-            <!-- ComboBox Select2 chọn chương -->
             <div style="width: 250px;">
-                <!-- Giấu URL gốc vào thuộc tính data-base-url -->
                 <select class="form-control select2-chuong" id="chonChuong" 
                         th:attr="data-base-url=@{/doc-truyen/{slug}/{idTruyen}(slug=${truyen.slug}, idTruyen=${truyen.id})}">
                     <option th:each="c : ${dsChuong}" 
@@ -74,7 +68,6 @@
                 </select>
             </div>
 
-            <!-- Nút Tới Chương -->
             <a th:if="${chuongSau != null}" 
                th:href="@{/doc-truyen/{slug}/{idTruyen}/{idChuong}(slug=${truyen.slug}, idTruyen=${truyen.id}, idChuong=${chuongSau.id})}" 
                class="btn btn-danger">
@@ -87,12 +80,10 @@
         </div>
     </div>
 
-    <!-- KHU VỰC HIỂN THỊ ẢNH TRUYỆN -->
     <div class="container-fluid p-0 bg-black text-center mt-3 pb-5">
         <!-- Dùng dummy image, sau này Thymeleaf sẽ lặp th:each in ra mớ ảnh này -->
-        <img th:each="anh : ${dsAnhChuong}" th:src="@{'/images/truyen/' + anh.tenFileAnh}" class="comic-page" th:alt="|Trang ${anh.thuTu}|">
+        <img th:each="anh : ${dsAnhChuong}" th:src="@{|/images/chuong/${anh.tenFileAnh}|}" class="comic-page" th:alt="|Trang ${anh.thuTu}|">
 
-<!-- THANH CÔNG CỤ ĐỌC TRUYỆN (STICKY HEADER) -->
     <div class="shadow-sm py-2" style="background-color: var(--bs-tertiary-bg);">
         <div class="container d-flex justify-content-center align-items-center gap-2">
             
@@ -106,7 +97,6 @@
                <i class="bi bi-chevron-left"></i> Chap Trước
             </button>
             
-            <!-- ComboBox Select2 chọn chương -->
             <div style="width: 250px;">
                 <!-- Giấu URL gốc vào thuộc tính data-base-url -->
                 <select class="form-control select2-chuong" id="chonChuong" 
@@ -119,7 +109,6 @@
                 </select>
             </div>
 
-            <!-- Nút Tới Chương -->
             <a th:if="${chuongSau != null}" 
                th:href="@{/doc-truyen/{slug}/{idTruyen}/{idChuong}(slug=${truyen.slug}, idTruyen=${truyen.id}, idChuong=${chuongSau.id})}" 
                class="btn btn-danger">
@@ -132,8 +121,7 @@
         </div>
     </div>
 
-    <!-- THƯ VIỆN JS -->
-    <!-- jQuery (Bắt buộc phải có để xài Select2) -->
+
     <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
@@ -147,7 +135,6 @@
                 width: '100%' 
             });
 
-            // Lắng nghe sự kiện đổi chương theo CLASS thay vì ID
             $('.select2-chuong').on('select2:select', function (e) {
                 let chuongId = e.params.data.id;
                 let baseUrl = $(this).attr('data-base-url');

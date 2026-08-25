@@ -25,6 +25,11 @@ public class TruyenService {
     @Autowired
     DanhGiaService repoDanhGia;
 
+    public List<Truyen> layDanhSach()
+    {
+        return repo.findAll();
+    }
+
     public Truyen layThongTinTruyen(int id)
     {
         return repo.findById(id).orElse(null);
