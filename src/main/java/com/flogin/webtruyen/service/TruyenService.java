@@ -109,4 +109,33 @@ public class TruyenService {
         return false;
     }
 
+    public boolean themTruyen(Truyen truyen)
+    {
+        if(truyen != null)
+        {
+            repo.save(truyen);
+            return true;
+        }
+        return false;
+    }
+
+    public boolean suaTruyen(Truyen truyen)
+    {
+        if(truyen != null)
+        {
+            repo.save(truyen);
+            return true;
+        }
+        return false;
+    }
+
+    public boolean xoaTruyen(Truyen truyen)
+    {
+        if(truyen != null)
+        {
+            repo.delete(truyen);
+            return true;
+        }
+        return false;
+    }
 }   
