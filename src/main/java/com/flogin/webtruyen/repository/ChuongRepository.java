@@ -13,4 +13,5 @@ public interface ChuongRepository extends JpaRepository<Chuong, Integer>{
     Chuong findTopByTruyenOrderBySoChuongDesc(Truyen truyen);
     List<Chuong> findByTruyenOrderBySoChuongDesc(Truyen truyen);
     boolean existsByTruyenIdAndSoChuong(int truyenId, int soChuong);
+    Chuong findFirstByTruyenOrderBySoChuongAsc(Truyen truyen);
 }

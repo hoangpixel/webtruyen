@@ -3,8 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quản Lý Thể Loại - Sở Chỉ Huy</title>
-    <!-- Bootstrap 5 -->
+    <title>Quản Lý Thể Loại</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
     
@@ -42,7 +41,7 @@
                             <button class="btn btn-outline-info ms-2" type="submit"><i class="bi bi-search"></i></button>
                         </form>
                         <!-- Nút Mở Modal Thêm -->
-                        <button class="btn btn-danger fw-bold" data-bs-toggle="modal" data-bs-target="#modalThemTheLoai">
+                        <button sec:authorize="hasAuthority('THEM_THE_LOAI')" class="btn btn-danger fw-bold" data-bs-toggle="modal" data-bs-target="#modalThemTheLoai">
                             <i class="bi bi-plus-lg"></i> Thêm Thể Loại
                         </button>
                     </div>
@@ -66,10 +65,8 @@
                                     <td class="fw-bold text-info" th:text="${tl.tenTheLoai}">Tiên Hiệp</td>
                                     <td class="text-muted text-truncate" style="max-width: 300px;" th:text="${tl.moTa}">Bối cảnh tu đạo, cầu trường sinh...</td>
                                     <td class="text-center">
-                                        <!-- Nút Sửa -->
-                                        <button class="btn btn-sm btn-outline-warning mx-1" data-bs-toggle="modal" th:attr="data-bs-target='#modalSuaTheLoai_' + ${tl.id}" title="Sửa"><i class="bi bi-pencil-square"></i></button>
-                                        <!-- Nút Xóa -->
-                                        <button class="btn btn-sm btn-outline-danger" data-bs-toggle="modal" th:attr="data-bs-target='#modalXoaTheLoai_' + ${tl.id}" title="Xóa"><i class="bi bi-trash"></i></button>
+                                        <button sec:authorize="hasAuthority('SUA_THE_LOAI')" class="btn btn-sm btn-outline-warning mx-1" data-bs-toggle="modal" th:attr="data-bs-target='#modalSuaTheLoai_' + ${tl.id}" title="Sửa"><i class="bi bi-pencil-square"></i></button>
+                                        <button sec:authorize="hasAuthority('XOA_THE_LOAI')" class="btn btn-sm btn-outline-danger" data-bs-toggle="modal" th:attr="data-bs-target='#modalXoaTheLoai_' + ${tl.id}" title="Xóa"><i class="bi bi-trash"></i></button>
                                     </td>
 
                                     <!-- MODAL SỬA THỂ LOẠI (Nằm ngay trong vòng lặp) -->

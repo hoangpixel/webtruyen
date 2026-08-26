@@ -3,22 +3,23 @@ package com.flogin.webtruyen.controller;
 import java.nio.file.Paths;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.flogin.webtruyen.model.TaiKhoan;
+import com.flogin.webtruyen.security.CustomUserDetails;
 import com.flogin.webtruyen.service.TaiKhoanService;
 
 import org.springframework.ui.Model;
-import jakarta.servlet.http.HttpSession;
 
-    import java.nio.file.Files;
-    import java.nio.file.Path;
-    import java.nio.file.Paths;
-    import java.nio.file.StandardCopyOption;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 
 @Controller
 public class UserController {
@@ -26,19 +27,27 @@ public class UserController {
     @Autowired
     TaiKhoanService busTaiKhoan;
 
-    @GetMapping("/chi-tiet-user")
-    private String hienThiChiTietUser(Model model, HttpSession session)
+    @GetMapping("/chi-tiet-nguoi-dung")
+    private String hienThiChiTietUser(Model model, Authentication auth)
     {
-        String username = (String) session.getAttribute("nguoiDung");
+        String username = auth.getName();
         TaiKhoan tk = busTaiKhoan.layThongTinTaiKhoan(username);
         model.addAttribute("tkNguoiDung", tk);
         return "user/chi_tiet_user";
     }
 
     @PostMapping("/xu-ly-cap-nhat-thong-tin")
-    public String getMethodName(@RequestParam int id,@RequestParam String hoTen, @RequestParam String email, @RequestParam("matKhauMoi") String password, @RequestParam("fileAvatar") MultipartFile file, HttpSession session) {
-        String username = (String) session.getAttribute("nguoiDung");
+    public String getMethodName(@RequestParam int id,@RequestParam String hoTen, @RequestParam String email, @RequestParam("matKhauMoi") String password, @RequestParam("fileAvatar") MultipartFile file, Authentication auth, Model model, RedirectAttributes ra) {
+        String username = auth.getName();
         
+        if(busTaiKhoan.kiemTraTrungEmailVoiIdKhac(email,id))
+        {
+            TaiKhoan tkNguoiDung = busTaiKhoan.layThongTinTaiKhoan(username);
+            ra.addFlashAttribute("loi", "Email đã tồn tại!");
+            model.addAttribute("tkNguoiDung", tkNguoiDung);
+            return "redirect:/chi-tiet-nguoi-dung";
+        }
+
         TaiKhoan tk = new TaiKhoan();
         tk.setId(id);
         tk.setHoTen(hoTen);
@@ -50,8 +59,9 @@ public class UserController {
         {
             try
             {
-                String tenAnhMoi = (String) session.getAttribute("avatar");
-                if(!file.isEmpty() && file != null)
+                CustomUserDetails userDetails = (CustomUserDetails) auth.getPrincipal();
+                String tenAnhMoi = userDetails.getTaiKhoan().getAvatar();
+                if(file != null && !file.isEmpty())
                 {
                     String tenFile = file.getOriginalFilename();
                     Path duongDan = Paths.get("src/main/resources/static/images/avatar/" + tenFile);
@@ -61,14 +71,16 @@ public class UserController {
                 }
                 if(busTaiKhoan.capNhatTaiKhoan(tk))
                 {
-                    session.setAttribute("avatar", tenAnhMoi);
+                    userDetails.getTaiKhoan().setAvatar(tenAnhMoi);
+                    userDetails.getTaiKhoan().setHoTen(hoTen);
+                    ra.addFlashAttribute("thongbao", "Cập nhật thông tin thành công!");
                 }
             }catch(Exception e)
             {
                 e.printStackTrace();
             }
         }
-        return "redirect:/";
+        return "redirect:/chi-tiet-nguoi-dung";
     }
     
 }

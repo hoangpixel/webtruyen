@@ -112,10 +112,10 @@
                             
                             <input type="hidden" name="diemSao" id="diemSaoInput" th:value="${soSaoCu != null ? soSaoCu : 5}">
                             
-                            <button th:if="${session.nguoiDung != null}" type="submit" class="btn btn-warning btn-sm p-1 lh-1" title="Gửi đánh giá">
+                            <button th:if="${#authorization.expression('isAuthenticated()')}" type="submit" class="btn btn-warning btn-sm p-1 lh-1" title="Gửi đánh giá">
                                 <i class="bi bi-send-fill"></i>
                             </button>
-                            <a th:if="${session.nguoiDung == null}" th:href="@{/login-user}" class="badge bg-danger text-decoration-none">
+                            <a th:if="${!#authorization.expression('isAuthenticated()')}" th:href="@{/dang-nhap}" class="badge bg-danger text-decoration-none">
                                 Đăng nhập để rate
                             </a>
                         </form>
@@ -136,12 +136,20 @@
                 <h5 class="border-bottom pb-2 text-warning"><i class="bi bi-list-ol"></i> Danh Sách Chương</h5>
                 <div class="chuong-list bg-body-tertiary rounded shadow-sm">
                     
-                    <!-- Đã fix vụ bọc ${} và đổi thành infoTruyen.slug -->
                     <a th:each="chuong : ${infoTruyen.danhSachChuong}" 
-                       th:href="@{/doc-truyen/{slug}/{idTruyen}/{idChuong}(slug=${infoTruyen.slug}, idTruyen=${infoTruyen.id}, idChuong=${chuong.id})}" 
-                       class="chuong-item">
-                       <i class="bi bi-journal-text me-2"></i>
-                       <span th:text="'Chương ' + ${chuong.soChuong} + ' : ' + ${chuong.tenChuong}"></span>
+                    th:href="@{/doc-truyen/{slug}/{idTruyen}/{idChuong}(slug=${infoTruyen.slug}, idTruyen=${infoTruyen.id}, idChuong=${chuong.id})}" 
+                    class="chuong-item d-flex justify-content-between align-items-center">
+
+                        <div>
+                            <i class="bi bi-journal-text me-2"></i>
+                            <span th:text="'Chương ' + ${chuong.soChuong} + ' : ' + ${chuong.tenChuong}"></span>
+                        </div>
+
+                        <small class="text-muted">
+                            <i class="bi bi-eye-fill"></i>
+                            <span th:text="${chuong.luotXem}"></span>
+                        </small>
+
                     </a>
                     
                 </div>
@@ -153,15 +161,17 @@
                 
                 <div class="bg-body-tertiary p-3 rounded shadow-sm">
                     <!-- Check th:if: Nếu đăng nhập rồi mới hiện form nhập -->
-                    <form th:if="${session.nguoiDung != null}" th:action="@{/them-binh-luan}" method="POST">
+                    <form th:if="${#authorization.expression('isAuthenticated()')}"
+                    th:action="@{/them-binh-luan}"
+                    method="POST">
                         <!-- Đã bổ sung name="truyenId" -->
                         <input type="hidden" name="truyenId" th:value="${infoTruyen.id}">
                         <textarea name="noiDung" class="form-control mb-2" rows="3" placeholder="Nhập bình luận của bạn..." required></textarea>
                         <button type="submit" class="btn btn-primary w-100 mb-4"><i class="bi bi-send"></i> Gửi Bình Luận</button>
                     </form>
                     
-                    <div th:if="${session.nguoiDung == null}" class="alert alert-warning text-center mb-4">
-                        Vui lòng <a th:href="@{/login-user}" class="alert-link">Đăng nhập</a> để tham gia bình luận.
+                    <div th:unless="${#authorization.expression('isAuthenticated()')}" class="alert alert-warning text-center mb-4">
+                        Vui lòng <a th:href="@{/dang-nhap}" class="alert-link">Đăng nhập</a> để tham gia bình luận.
                     </div>
                     
                     <!-- Lặp danh sách bình luận -->
@@ -188,6 +198,30 @@
 
         </div>
 
+    </div>
+
+    <div th:if="${thongbao != null}" class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 1055;">
+        <div id="thongBaoToast" class="toast align-items-center text-bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="d-flex">
+                <div class="toast-body fw-bold">
+                    <i class="bi bi-check-circle-fill me-2"></i>
+                    <span th:text="${thongbao}"></span>
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+            </div>
+        </div>
+    </div>
+
+    <div th:if="${loi != null}" class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 1055;">
+        <div id="loiToast" class="toast align-items-center text-bg-danger border-0" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="d-flex">
+                <div class="toast-body fw-bold">
+                    <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                    <span th:text="${loi}"></span>
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+            </div>
+        </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
@@ -262,6 +296,25 @@
                     alert("Trình duyệt không hỗ trợ copy tự động, bạn hãy copy link trên thanh địa chỉ nhé!");
                 }
             }
+        });
+    </script>
+    <script>
+        const btn = document.getElementById('sidebarCollapse');
+
+        if(btn)
+        {
+            btn.addEventListener('click', function () {
+                document.getElementById('sidebar')
+                        ?.classList.toggle('toggled');
+            });
+        }
+
+        document.addEventListener("DOMContentLoaded", function() {
+            const tbElement = document.getElementById('thongBaoToast');
+            if(tbElement) new bootstrap.Toast(tbElement, { delay: 4000 }).show();
+            
+            const loiElement = document.getElementById('loiToast');
+            if(loiElement) new bootstrap.Toast(loiElement, { delay: 4000 }).show();
         });
     </script>
 </body>

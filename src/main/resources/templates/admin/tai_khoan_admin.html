@@ -106,7 +106,13 @@
                                         <!-- Nút Sửa -->
                                         <button class="btn btn-sm btn-outline-warning mx-1" data-bs-toggle="modal" th:attr="data-bs-target='#modalSuaTaiKhoan_' + ${tk.id}" title="Phân Quyền / Khóa"><i class="bi bi-pencil-square"></i></button>
                                         <!-- Nút Xóa -->
-                                        <button class="btn btn-sm btn-outline-danger" data-bs-toggle="modal" th:attr="data-bs-target='#modalXoaTaiKhoan_' + ${tk.id}" title="Xóa Vĩnh Viễn"><i class="bi bi-trash"></i></button>
+                                        <button th:if="${!tk.hasRole('ADMIN')}"
+                                                class="btn btn-sm btn-outline-danger"
+                                                data-bs-toggle="modal"
+                                                th:attr="data-bs-target='#modalXoaTaiKhoan_' + ${tk.id}"
+                                                title="Xóa Vĩnh Viễn">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
                                     </td>
 
                                     <!-- MODAL SỬA TÀI KHOẢN -->

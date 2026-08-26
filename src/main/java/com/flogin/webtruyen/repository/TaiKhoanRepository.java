@@ -21,4 +21,6 @@ public interface TaiKhoanRepository extends JpaRepository<TaiKhoan, Integer> {
     TaiKhoan findByUsername(String username);
 
     Page<TaiKhoan> findByUsernameContainingOrderByIdDesc(String username, Pageable pageAble);
+
+    boolean existsByEmailAndIdNot(String email, int id);
 }

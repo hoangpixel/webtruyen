@@ -82,4 +82,9 @@ public class ChuongService {
     {
         return repoChuong.existsByTruyenIdAndSoChuong(truyenId, soChuong);
     }
+
+    public Chuong layChuongDauTien(Truyen truyen)
+    {
+        return repoChuong.findFirstByTruyenOrderBySoChuongAsc(truyen);
+    }
 }

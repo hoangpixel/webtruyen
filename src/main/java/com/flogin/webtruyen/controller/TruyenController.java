@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 
@@ -15,6 +16,7 @@ import com.flogin.webtruyen.model.TaiKhoan;
 import com.flogin.webtruyen.model.TheLoai;
 import com.flogin.webtruyen.model.Truyen;
 import com.flogin.webtruyen.service.BinhLuanService;
+import com.flogin.webtruyen.service.ChuongService;
 import com.flogin.webtruyen.service.DanhGiaService;
 import com.flogin.webtruyen.service.TaiKhoanService;
 import com.flogin.webtruyen.service.TheLoaiService;
@@ -46,6 +48,9 @@ public class TruyenController {
 
     @Autowired
     TheLoaiService busTheLoai;
+
+    @Autowired
+    ChuongService busChuong;
 
     @GetMapping({"/index", "/"})
     public String loadDanhSachTruyen(@RequestParam(name = "page", defaultValue = "1") int page ,Model model) {
@@ -107,7 +112,7 @@ public class TruyenController {
     }
     
     @GetMapping({"/chi-tiet-truyen/{id}", "/chi-tiet-truyen/{tenTruyen}/{id}"})
-    public String xuLyXemChiTietTruyen(@PathVariable("id") int id, Model model, HttpSession session) {
+    public String xuLyXemChiTietTruyen(@PathVariable("id") int id, Model model, Authentication auth) {
         Truyen infoTruyen = bus.layThongTinTruyen(id);
         model.addAttribute("infoTruyen", infoTruyen);
 
@@ -115,28 +120,38 @@ public class TruyenController {
         int tongSoBinhLuan = busBinhLuan.tongSoLuotBinhLuan(id);
         model.addAttribute("danhSachBinhLuan", dsBinhLuan);
         model.addAttribute("tongBinhLuan", tongSoBinhLuan);
+        model.addAttribute("chuongDauTien", busChuong.layChuongDauTien(infoTruyen));
 
-        String user = (String) session.getAttribute("nguoiDung");
-
-        if(user != null)
+        if(auth != null && auth.isAuthenticated()
+                && !"anonymousUser".equals(auth.getName()))
         {
-            TaiKhoan infoTaiKhoan = busTaiKhoan.layThongTinTaiKhoan(user);
-            DanhGia dg = busDanhGia.layThongTinDanhGia(infoTruyen, infoTaiKhoan);
-            if(dg != null)
+            String user = auth.getName();
+
+            TaiKhoan infoTaiKhoan =
+                busTaiKhoan.layThongTinTaiKhoan(user);
+
+            if(infoTaiKhoan != null)
             {
-                model.addAttribute("soSaoCu", dg.getDiemSao());
+                DanhGia dg =
+                    busDanhGia.layThongTinDanhGia(infoTruyen, infoTaiKhoan);
+
+                if(dg != null)
+                {
+                    model.addAttribute("soSaoCu", dg.getDiemSao());
+                }
             }
         }
         return "/user/chi_tiet";
     }
     
     @PostMapping("/them-danh-gia")
-    public String xuLyThemDanhGia(@RequestParam int truyenId, @RequestParam int diemSao, HttpSession session) {
-        String user = (String) session.getAttribute("nguoiDung");
-        if(user == null || user.isEmpty())
+    public String xuLyThemDanhGia(@RequestParam int truyenId, @RequestParam int diemSao, Authentication auth) {
+        if(auth == null )
         {
-            return "redirect:/login-user";
+            return "redirect:/dang-nhap";
         }
+
+        String user = auth.getName();
 
         TaiKhoan tk = busTaiKhoan.layThongTinTaiKhoan(user);
         Truyen truyen = bus.layThongTinTruyen(truyenId);
@@ -151,12 +166,13 @@ public class TruyenController {
     }
     
     @PostMapping("/them-binh-luan")
-    public String postMethodName(@RequestParam int truyenId, @RequestParam String noiDung, HttpSession session) 
+    public String postMethodName(@RequestParam int truyenId, @RequestParam String noiDung, Authentication auth) 
     {
-        String user = (String) session.getAttribute("nguoiDung");
-        if (user == null || user.isEmpty()) {
-            return "redirect:/login-user";
+        if(auth == null)
+        {
+            return "redirect:/dang-nhap";
         }
+        String user = auth.getName();
 
         if(noiDung == null || noiDung.trim().isEmpty()) {
             return "redirect:/chi-tiet-truyen/" + truyenId;

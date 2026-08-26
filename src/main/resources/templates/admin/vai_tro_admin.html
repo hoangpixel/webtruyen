@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quản Lý Vai Trò & Phân Quyền - Sở Chỉ Huy</title>
+    <title>Quản Lý Vai Trò & Phân Quyền</title>
     <!-- Bootstrap 5 -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
@@ -50,7 +50,7 @@
 
                     <div class="d-flex gap-2">
                         <!-- Nút Mở Modal Thêm Vai Trò Mới -->
-                        <button class="btn btn-danger fw-bold" data-bs-toggle="modal" data-bs-target="#modalThemVaiTro">
+                        <button sec:authorize="hasAuthority('THEM_VAI_TRO')" class="btn btn-danger fw-bold" data-bs-toggle="modal" data-bs-target="#modalThemVaiTro">
                             <i class="bi bi-plus-lg"></i> Tạo Vai Trò
                         </button>
                     </div>
@@ -93,9 +93,9 @@
 
                                     <td class="text-center">
                                         <!-- Nút Sửa -->
-                                        <button class="btn btn-sm btn-outline-warning mx-1" data-bs-toggle="modal" th:attr="data-bs-target='#modalSuaVaiTro_' + ${vt.id}" title="Thiết Lập Quyền"><i class="bi bi-pencil-square"></i></button>
+                                        <button sec:authorize="hasAuthority('SUA_VAI_TRO')" class="btn btn-sm btn-outline-warning mx-1" data-bs-toggle="modal" th:attr="data-bs-target='#modalSuaVaiTro_' + ${vt.id}" title="Thiết Lập Quyền"><i class="bi bi-pencil-square"></i></button>
                                         <!-- Nút Xóa (Nếu là ADMIN thì không cho xóa) -->
-                                        <button th:if="${vt.tenVaiTro != 'ADMIN'}" class="btn btn-sm btn-outline-danger" data-bs-toggle="modal" th:attr="data-bs-target='#modalXoaVaiTro_' + ${vt.id}" title="Xóa Vai Trò"><i class="bi bi-trash"></i></button>
+                                        <button sec:authorize="hasAuthority('XOA_VAI_TRO')" th:if="${vt.tenVaiTro != 'ADMIN'}" class="btn btn-sm btn-outline-danger" data-bs-toggle="modal" th:attr="data-bs-target='#modalXoaVaiTro_' + ${vt.id}" title="Xóa Vai Trò"><i class="bi bi-trash"></i></button>
                                         <button th:if="${vt.tenVaiTro == 'ADMIN'}" class="btn btn-sm btn-outline-secondary" disabled title="Vai trò gốc không thể xóa"><i class="bi bi-trash"></i></button>
                                     </td>
 

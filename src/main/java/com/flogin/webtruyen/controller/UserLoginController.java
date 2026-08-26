@@ -27,32 +27,32 @@ public class UserLoginController {
     @Autowired
     VaiTroRepository repoVaiTro;
 
-    @GetMapping("/login-user")
+    @GetMapping("/dang-nhap")
     public String login() {
         return "user/login_user";
     }
     
 
-    @PostMapping("/user/login")
-    public String kiemTraDangNhap(@RequestParam String username,@RequestParam String password, Model model, HttpSession session) {
+    // @PostMapping("/user/login")
+    // public String kiemTraDangNhap(@RequestParam String username,@RequestParam String password, Model model, HttpSession session) {
         
-        if(bus.kiemTraTaiKhoan(username, password))
-        {
-            TaiKhoan tk = bus.layTaiKhoan(username, password);
-            session.setAttribute("nguoiDung", tk.getUsername());
-            session.setAttribute("vaiTro", tk.getChucVuString());
-            session.setAttribute("avatar", tk.getAvatar());
-            return "redirect:/";
-        }
-        model.addAttribute("loi", "Sai tài khoản hoặc mật khẩu!");
-        return "/user/login_user";
-    }
+    //     if(bus.kiemTraTaiKhoan(username, password))
+    //     {
+    //         TaiKhoan tk = bus.layTaiKhoan(username, password);
+    //         session.setAttribute("nguoiDung", tk.getUsername());
+    //         session.setAttribute("vaiTro", tk.getChucVuString());
+    //         session.setAttribute("avatar", tk.getAvatar());
+    //         return "redirect:/";
+    //     }
+    //     model.addAttribute("loi", "Sai tài khoản hoặc mật khẩu!");
+    //     return "/user/login_user";
+    // }
     
-    @GetMapping("/logout")
-    public String logout(HttpSession session) {
-        session.invalidate();
-        return "redirect:/";
-    }
+    // @GetMapping("/logout")
+    // public String logout(HttpSession session) {
+    //     session.invalidate();
+    //     return "redirect:/";
+    // }
     
     @GetMapping("/dang-ky")
     public String moTrangDangKy()
@@ -94,6 +94,6 @@ public class UserLoginController {
 
         bus.themTaiKhoan(tk);
         
-        return "redirect:/login-user";
+        return "redirect:/dang-nhap";
     }
 }

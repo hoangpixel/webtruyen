@@ -9,7 +9,7 @@
         <div class="ms-auto d-flex align-items-center">
 
             <span class="me-3 fw-bold text-info">
-                <i class="bi bi-person-badge-fill"></i><span th:text="${session.adminLog}">Admin</span>
+                <i class="bi bi-person-badge-fill"></i><span th:text="${#authentication.principal.taiKhoan.username}">Admin</span>
             </span>
             
             <button class="btn" id="btn-theme-toggle" style="border: none; font-size: 1.2rem;">

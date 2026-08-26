@@ -127,4 +127,9 @@ public class TaiKhoanService {
         }
         return false;
     }
+
+    public boolean kiemTraTrungEmailVoiIdKhac(String email, int id)
+    {
+        return repo.existsByEmailAndIdNot(email, id);
+    }
 }

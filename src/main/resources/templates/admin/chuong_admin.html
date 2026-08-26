@@ -3,8 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quản Lý Chương - Sở Chỉ Huy</title>
-    <!-- Bootstrap 5 -->
+    <title>Quản Lý Chương</title>
      <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
@@ -42,7 +41,7 @@
                             <button class="btn btn-outline-info ms-2" type="submit"><i class="bi bi-search"></i></button>
                         </form>
                         <!-- Nút Mở Modal Thêm Chương -->
-                        <button class="btn btn-danger fw-bold" data-bs-toggle="modal" data-bs-target="#modalThemChuong">
+                        <button sec:authorize="hasAuthority('THEM_CHUONG')" class="btn btn-danger fw-bold" data-bs-toggle="modal" data-bs-target="#modalThemChuong">
                             <i class="bi bi-plus-lg"></i> Thêm Chương
                         </button>
                     </div>
@@ -70,9 +69,8 @@
                                     <td th:text="${chuong.tenChuong}">Tên chương</td>
                                     <td th:text="${chuong.luotXem}">0</td>
                                     <td class="text-center">
-                                        <!-- Xóa Chương -->
-                                        <button class="btn btn-sm btn-outline-danger" data-bs-toggle="modal" th:attr="data-bs-target='#modalXoaChuong_' + ${chuong.id}" title="Xóa"><i class="bi bi-trash"></i></button>
-                                        <button class="btn btn-sm btn-outline-warning mx-1" data-bs-toggle="modal" th:attr="data-bs-target='#modalSuaChuong_' + ${chuong.id}" title="Sửa thông tin"><i class="bi bi-pencil-square"></i></button>
+                                        <button sec:authorize="hasAuthority('SUA_CHUONG')" class="btn btn-sm btn-outline-warning mx-1" data-bs-toggle="modal" th:attr="data-bs-target='#modalSuaChuong_' + ${chuong.id}" title="Sửa thông tin"><i class="bi bi-pencil-square"></i></button>
+                                        <button sec:authorize="hasAuthority('XOA_CHUONG')" class="btn btn-sm btn-outline-danger" data-bs-toggle="modal" th:attr="data-bs-target='#modalXoaChuong_' + ${chuong.id}" title="Xóa"><i class="bi bi-trash"></i></button>
                                     </td>
 
                                     <!-- MODAL XÓA CHƯƠNG -->
