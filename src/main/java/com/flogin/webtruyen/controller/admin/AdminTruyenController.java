@@ -5,7 +5,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 
+import com.flogin.webtruyen.model.TheLoai;
 import com.flogin.webtruyen.model.Truyen;
+import com.flogin.webtruyen.service.TheLoaiService;
 import com.flogin.webtruyen.service.TruyenService;
 
 
@@ -19,6 +21,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import java.nio.file.*;
+import java.util.ArrayList;
+import java.util.List;
 
 
 @Controller
@@ -28,15 +32,20 @@ public class AdminTruyenController {
     @Autowired
     TruyenService busTruyen;
 
+    @Autowired
+    TheLoaiService busTheLoai;
+
     @GetMapping({"", "/"})
     public String loadDanhSachTruyen(@RequestParam(name="page", defaultValue = "1") int page, Model model) {
         
         int tongSoSanPham = 2;
         Page<Truyen> pageAble = busTruyen.layDanhSachTheoPhanTrang(page, tongSoSanPham);
+        List<TheLoai> dsTheLoai = busTheLoai.layDanhSach();
 
         model.addAttribute("danhSachTruyen", pageAble.getContent());
         model.addAttribute("trangHienTai", page);
         model.addAttribute("tongSoTrang", pageAble.getTotalPages());
+        model.addAttribute("danhSachTheLoai", dsTheLoai);
 
         return "admin/truyen_admin";
     }
@@ -57,7 +66,7 @@ public class AdminTruyenController {
     
 
     @PostMapping("/them-truyen")
-    public String xuLyThemTruyen(@ModelAttribute Truyen truyen, @RequestParam("fileAnh") MultipartFile file, RedirectAttributes redirectAttributes) {
+    public String xuLyThemTruyen(@ModelAttribute Truyen truyen, @RequestParam(name = "theLoaiIds", required = false) List<Integer> dsTheLoai,@RequestParam("fileAnh") MultipartFile file, RedirectAttributes redirectAttributes) {
 
         if(truyen != null) {
             try {
@@ -70,8 +79,21 @@ public class AdminTruyenController {
                     truyen.setAnhBia("default.jpg");
                 }
                 
+                if(dsTheLoai != null || !dsTheLoai.isEmpty())
+                {
+                    List<TheLoai> dsTheLoaiMoi = busTheLoai.layDanhSachTheLoaiTheoId(dsTheLoai);
+                    truyen.setDanhSachTheLoai(dsTheLoaiMoi);
+                }else
+                {
+                    truyen.setDanhSachTheLoai(new ArrayList<>());
+                }
+
+                if(truyen.getTenTruyen() == null)
+                {
+                    truyen.setTacGia("Đang cập nhật");
+                }
+
                 truyen.setLuotXem(0);
-                
                 busTruyen.themTruyen(truyen);
                 redirectAttributes.addFlashAttribute("thongbao", "Đã thêm thành công truyện mới");
             } catch(Exception e) {
@@ -96,7 +118,7 @@ public class AdminTruyenController {
     }
     
     @PostMapping("/sua-truyen")
-    public String xuLySuaTruyen(@ModelAttribute Truyen truyen, @RequestParam("fileAnh") MultipartFile file, RedirectAttributes redirectAttributes) {
+    public String xuLySuaTruyen(@ModelAttribute Truyen truyen, @RequestParam(name ="theLoaiIds", required = false) List<Integer> dsTheLoai ,@RequestParam("fileAnh") MultipartFile file, RedirectAttributes redirectAttributes) {
         if(truyen != null) {
             try {
                 Truyen truyenCu = busTruyen.layThongTinTruyen(truyen.getId());
@@ -111,6 +133,15 @@ public class AdminTruyenController {
                     truyen.setAnhBia(truyenCu.getAnhBia());
                 }
                 
+                if(dsTheLoai != null || !dsTheLoai.isEmpty())
+                {
+                    List<TheLoai> dsTheLoaiMoi = busTheLoai.layDanhSachTheLoaiTheoId(dsTheLoai);
+                    truyen.setDanhSachTheLoai(dsTheLoaiMoi);
+                }else
+                {
+                    truyen.setDanhSachTheLoai(new ArrayList<>());
+                }
+
                 truyen.setLuotXem(truyenCu.getLuotXem()); 
                 
                 busTruyen.suaTruyen(truyen);

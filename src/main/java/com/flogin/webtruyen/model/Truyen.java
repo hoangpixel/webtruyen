@@ -58,4 +58,20 @@ public class Truyen {
         
         return temp.toLowerCase().replaceAll("-+", "-").replaceAll("^-|-$", "");
     }
+
+    public boolean hasTheLoai(int idTheLoai)
+    {
+        if(this.danhSachTheLoai == null || this.danhSachTheLoai.isEmpty())
+        {
+            return false;
+        }
+        for(TheLoai tl : this.danhSachTheLoai)
+        {
+            if(tl.getId() == idTheLoai)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
 }

@@ -24,6 +24,11 @@ public class TheLoaiService {
         return repo.findAll(pageable);
     }
 
+    public List<TheLoai> layDanhSachTheLoaiTheoId(List<Integer> ids)
+    {
+        return repo.findAllById(ids);
+    }
+
     public Page<TheLoai> timKiemCoBan(int trangHienTai, int size, String tenTheLoai)
     {
         Pageable pageble = PageRequest.of(trangHienTai - 1, size);

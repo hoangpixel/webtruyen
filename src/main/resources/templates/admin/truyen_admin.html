@@ -17,6 +17,16 @@
         .nav-link:hover, .nav-link.active { background-color: rgba(255, 87, 34, 0.1); color: #ff5722; border-left: 4px solid #ff5722; }
         .text-hot { color: #ff5722; }
         .truyen-thumb { width: 50px; height: 70px; object-fit: cover; border-radius: 4px; }
+        .role-checkbox-box { 
+            max-height: 150px;
+            overflow-y: auto;
+            border: 1px solid var(--bs-border-color); 
+            border-radius: 0.375rem; 
+            padding: 10px; 
+            background-color: var(--bs-body-bg); 
+        }
+        .role-checkbox-box::-webkit-scrollbar { width: 6px; }
+        .role-checkbox-box::-webkit-scrollbar-thumb { background-color: #6c757d; border-radius: 10px; }
     </style>
 </head>
 <body>
@@ -34,7 +44,7 @@
                 
                 <!-- Thanh công cụ: Search & Nút Thêm -->
                 <div class="d-flex justify-content-between align-items-center mb-4">
-                    <h3 class="fw-bold m-0"><i class="bi bi-book"></i> Quản Lý Chân Kinh</h3>
+                    <h3 class="fw-bold m-0"><i class="bi bi-book"></i> Quản Lý Truyện</h3>
                     
                     <div class="d-flex gap-2">
                         <form th:action="@{/admin/quan-ly-truyen/tim-kiem}" method="GET" class="d-flex">
@@ -58,6 +68,7 @@
                                     <th>Tên Truyện</th>
                                     <th>Tác Giả</th>
                                     <th>Trạng Thái</th>
+                                    <th>Thể Loại</th>
                                     <th class="text-center">Hành Động</th>
                                 </tr>
                             </thead>
@@ -69,6 +80,17 @@
                                     <td class="fw-bold text-info" th:text="${truyen.tenTruyen}">Ta Là Tà Đế</td>
                                     <td th:text="${truyen.tacGia}">Thời Đại Mạn Vương</td>
                                     <td><span class="badge bg-success" th:text="${truyen.trangThai}">Đang ra</span></td>
+                                    <td>
+                                        <div class="d-flex flex-wrap gap-1" style="max-width: 250px;">
+                                            <!-- Lặp qua danh sách thể loại của truyện này để in huy hiệu -->
+                                            <span th:each="tl : ${truyen.danhSachTheLoai}" 
+                                                  class="badge bg-secondary border border-secondary-subtle" 
+                                                  th:text="${tl.tenTheLoai}">
+                                            </span>
+                                            <!-- Báo trống nếu truyện chưa được gắn thể loại nào -->
+                                            <span th:if="${#lists.isEmpty(truyen.danhSachTheLoai)}" class="text-muted small fst-italic">Chưa có thể loại</span>
+                                        </div>
+                                    </td>           
                                     <td class="text-center">
                                         <!-- Nút gọi Modal -->
                                         <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" th:attr="data-bs-target='#modalChiTiet_' + ${truyen.id}" title="Chi tiết"><i class="bi bi-eye"></i></button>
@@ -92,6 +114,16 @@
                                                     <p class="mb-1"><strong>Tác giả:</strong> <span th:text="${truyen.tacGia}"></span></p>
                                                     <p class="mb-1"><strong>Lượt xem:</strong> <span th:text="${truyen.luotXem}"></span></p>
                                                     <p class="mb-1"><strong>Trạng thái:</strong> <span th:text="${truyen.trangThai}"></span></p>
+                                                    <p class="mb-1"><strong>Thể loại: </strong> 
+                                                        <span th:each="tl : ${truyen.danhSachTheLoai}" 
+                                                            class="badge bg-secondary me-1" 
+                                                            th:text="${tl.tenTheLoai}">
+                                                        </span>
+                                                        
+                                                        <span th:if="${#lists.isEmpty(truyen.danhSachTheLoai)}" class="text-muted small fst-italic">
+                                                            Chưa cập nhật
+                                                        </span>
+                                                    </p>
                                                     <hr>
                                                     <p class="text-start" style="white-space: pre-line;" th:text="${truyen.moTa}">Mô tả truyện...</p>
                                                 </div>
@@ -108,7 +140,7 @@
                                                     <input type="hidden" name="id" th:value="${truyen.id}">
                                                     
                                                     <div class="modal-header border-bottom">
-                                                        <h5 class="modal-title fw-bold text-warning"><i class="bi bi-pencil-square"></i> Cập Nhật Chân Kinh</h5>
+                                                        <h5 class="modal-title fw-bold text-warning"><i class="bi bi-pencil-square"></i> Cập Nhật Truyện</h5>
                                                         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                                                     </div>
                                                     
@@ -139,9 +171,20 @@
                                                             <input type="file" class="form-control input-anh-sua" name="fileAnh" accept="image/*" th:attr="data-truyen-id=${truyen.id}">
                                                         </div>
 
-                                                        <div class="col-12 mb-3">
+                                                        <div class="col-6 mb-3">
                                                             <label class="form-label fw-bold">Mô tả nội dung</label>
                                                             <textarea class="form-control" name="moTa" rows="4" th:text="${truyen.moTa}"></textarea>
+                                                        </div>
+                                                        <div class="col-6 mb-3">
+                                                            <label class="form-label fw-bold text-info">Thể loại</label>
+                                                                <div class="role-checkbox-box">
+                                                                        <div class="form-check" th:each="theLoai : ${danhSachTheLoai}">
+                                                                            <input class="form-check-input" type="checkbox" name="theLoaiIds" 
+                                                                                    th:value="${theLoai.id}" 
+                                                                                    th:checked="${truyen.hasTheLoai(theLoai.id)}">
+                                                                            <label class="form-check-label" th:text="${theLoai.tenTheLoai}"></label>
+                                                                        </div>
+                                                                </div>
                                                         </div>
                                                     </div>
                                                     
@@ -239,9 +282,19 @@
                                 <img id="previewAnhThem" src="" class="img-thumbnail d-none" style="max-height: 150px; object-fit: cover;">
                             </div>
                         </div>
-                        <div class="col-12 mb-3">
+                        <div class="col-6 mb-3">
                             <label class="form-label fw-bold">Mô tả nội dung</label>
                             <textarea class="form-control" name="moTa" rows="4"></textarea>
+                        </div>
+                        <div class="col-6 mb-3">
+                            <label class="form-label fw-bold text-info">Thể loại</label>
+                                <div class="role-checkbox-box">
+                                        <div class="form-check" th:each="theLoai : ${danhSachTheLoai}">
+                                            <input class="form-check-input" type="checkbox" name="theLoaiIds" 
+                                                    th:value="${theLoai.id}" >
+                                            <label class="form-check-label" th:text="${theLoai.tenTheLoai}"></label>
+                                        </div>
+                                </div>
                         </div>
                     </div>
                     <div class="modal-footer border-top">
