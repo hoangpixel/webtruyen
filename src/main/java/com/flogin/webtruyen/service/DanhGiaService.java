@@ -79,14 +79,21 @@ public class DanhGiaService {
     public void themDanhGiaVaCapNhatTruyen(DanhGia dg) {
         DanhGia checkDg = layThongTinDanhGia(dg.getTruyen(), dg.getTaiKhoan());
         
-        if (checkDg != null) 
-            {
+        if (checkDg != null) {
+            // Cập nhật lại số sao
             checkDg.setDiemSao(dg.getDiemSao());
             danhGiaRepo.save(checkDg);
 
             Truyen truyen = checkDg.getTruyen();
-
             int luotCu = truyen.getTongSoDanhGia();
+            
+            // 🚨 CHỐT CHẶN BẢO VỆ CHIA CHO 0
+            // Nếu phát hiện DB bị ảo (có đánh giá mà tổng lượt = 0)
+            if (luotCu <= 0) {
+                luotCu = 1;
+                truyen.setTongSoDanhGia(1); // Fix luôn lỗi data trong DB
+            }
+
             int tongSao = danhGiaRepo.tongSoSao(truyen.getId());
             
             double diemTB = (double) tongSao / luotCu;
@@ -95,11 +102,13 @@ public class DanhGiaService {
 
             truyenRepo.save(truyen);
         } else {
+            // Thêm mới hoàn toàn
             danhGiaRepo.save(dg);
             Truyen truyen = dg.getTruyen();
             
             int tongSoSao = danhGiaRepo.tongSoSao(truyen.getId());
             int tongSoLuotDanhGia = truyen.getTongSoDanhGia() + 1;
+            
             truyen.setTongSoDanhGia(tongSoLuotDanhGia);
 
             double diemTB = (double) tongSoSao / tongSoLuotDanhGia;

@@ -66,7 +66,6 @@
                 </div>
             </div>
 
-            <div th:if="${loi}" class="alert alert-danger py-2 text-center fw-bold" role="alert" th:text="${loi}"></div>
             <button type="submit" class="btn btn-hot w-100 fw-bold py-2 mb-3">ĐĂNG NHẬP</button>
             
             <div class="text-center">
@@ -76,7 +75,25 @@
         </form>
     </div>
 
-    <!-- Script đổi màu Sáng/Tối -->
+    <div th:if="${loi}" class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 1055;">
+        <div id="loiToast" class="toast align-items-center text-bg-danger border-0" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="d-flex">
+                <div class="toast-body fw-bold">
+                    <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                    <span th:text="${loi}"></span>
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const loiElement = document.getElementById('loiToast');
+            if(loiElement) new bootstrap.Toast(loiElement, { delay: 4000 }).show();
+        });
+    </script>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script th:src="@{/user/js/doi_mau.js}"></script>
 </body>

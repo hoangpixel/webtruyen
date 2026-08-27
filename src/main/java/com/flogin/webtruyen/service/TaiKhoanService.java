@@ -5,6 +5,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.flogin.webtruyen.model.TaiKhoan;
@@ -18,6 +19,9 @@ import java.util.Base64;
 public class TaiKhoanService {
     @Autowired
     TaiKhoanRepository repo;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     public Page<TaiKhoan> layDanhSachTheoPhanTrang(int trangHienTai, int size)
     {
@@ -33,16 +37,16 @@ public class TaiKhoanService {
         return repo.findByUsernameContainingOrderByIdDesc(username, pageble);
     }
 
-    public boolean kiemTraTaiKhoan(String username, String password) 
-    {
-        String hasdedPass = maHoaMatKhau(password);
-        return repo.existsByUsernameAndPassword(username, hasdedPass);
-    }
+    // public boolean kiemTraTaiKhoan(String username, String password) 
+    // {
+    //     String hasdedPass = maHoaMatKhau(password);
+    //     return repo.existsByUsernameAndPassword(username, hasdedPass);
+    // }
 
-    public TaiKhoan layTaiKhoan(String username, String password) {
-        String hasdedPass = maHoaMatKhau(password);
-        return repo.findByUsernameAndPassword(username, hasdedPass);
-    }
+    // public TaiKhoan layTaiKhoan(String username, String password) {
+    //     String hasdedPass = maHoaMatKhau(password);
+    //     return repo.findByUsernameAndPassword(username, hasdedPass);
+    // }
 
     public boolean kiemTraTrungUsername(String username)
     {
@@ -59,23 +63,11 @@ public class TaiKhoanService {
         return password.equals(confirmPassword);
     }
 
-    public String maHoaMatKhau(String password) 
-    {
-        try {
-            MessageDigest digest = MessageDigest.getInstance("SHA-256");
-            byte[] hash = digest.digest(password.getBytes("UTF-8"));
-            return Base64.getEncoder().encodeToString(hash); 
-        } catch (Exception ex) {
-            throw new RuntimeException("Lỗi mã hóa mật khẩu", ex);
-        }
-    }
-
     public boolean themTaiKhoan(TaiKhoan tk)
     {
         if(tk != null)
         {
-            String hashedPass = maHoaMatKhau(tk.getPassword());
-            tk.setPassword(hashedPass);
+            tk.setPassword(passwordEncoder.encode(tk.getPassword()));
             tk.setAvatar("default.jpg");
             tk.setTrangThai(1);
             repo.save(tk);
@@ -99,8 +91,7 @@ public class TaiKhoanService {
 
             if(tk.getPassword() != null && !tk.getPassword().isBlank())
             {
-                String hasedPass = maHoaMatKhau(tk.getPassword());
-                tkSua.setPassword(hasedPass);
+                tkSua.setPassword(passwordEncoder.encode(tk.getPassword()));
             }
             repo.save(tkSua);
             return true;
@@ -136,5 +127,10 @@ public class TaiKhoanService {
     public long tongTaiKhoan()
     {
         return repo.count();
+    }
+
+    public void luuThayDoiTaiKhoan(TaiKhoan tk)
+    {
+        repo.save(tk);
     }
 }

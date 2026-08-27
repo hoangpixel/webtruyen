@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -24,6 +25,9 @@ public class AdminTaiKhoanController {
     
     @Autowired
     VaiTroRepository repoVaiTro; 
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @GetMapping({"", "/"})
     public String loadDanhSachTaiKhoan(@RequestParam(name ="page", defaultValue = "1") int page, Model model) {
@@ -62,26 +66,27 @@ public class AdminTaiKhoanController {
         
         TaiKhoan tkCu = busTaiKhoan.layThongTinTaiKhoan(tkInput.getUsername());
         
-        if (tkCu != null) 
-        {
+        if (tkCu != null) {
             tkCu.setHoTen(tkInput.getHoTen());
             tkCu.setEmail(tkInput.getEmail());
             tkCu.setTrangThai(tkInput.getTrangThai());
             
-            if (vaiTroIds != null && !vaiTroIds.isEmpty()) 
-            {
+            if (vaiTroIds != null && !vaiTroIds.isEmpty()) {
                 List<VaiTro> vaiTroMoi = repoVaiTro.findAllById(vaiTroIds);
                 tkCu.setDanhSachVaiTro(vaiTroMoi);
             } else {
                 tkCu.setDanhSachVaiTro(new ArrayList<>()); 
             }
 
-            if (busTaiKhoan.capNhatTaiKhoan(tkCu)) 
-            {
-                redirectAttributes.addFlashAttribute("thongbao", "Thiết lập thành công tài khoản: " + tkCu.getUsername());
-            } else {
-                redirectAttributes.addFlashAttribute("loi", "Thiết lập thất bại!");
+            if (tkInput.getPassword() != null && !tkInput.getPassword().isBlank()) {
+                tkCu.setPassword(passwordEncoder.encode(tkInput.getPassword()));
             }
+            
+            busTaiKhoan.luuThayDoiTaiKhoan(tkCu); 
+            
+            redirectAttributes.addFlashAttribute("thongbao", "Thiết lập thành công tài khoản: " + tkCu.getUsername());
+        } else {
+            redirectAttributes.addFlashAttribute("loi", "Thiết lập thất bại! Không tìm thấy tài khoản.");
         }
         return "redirect:/admin/quan-ly-tai-khoan";
     }

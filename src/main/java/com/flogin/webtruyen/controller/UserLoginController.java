@@ -1,6 +1,11 @@
 package com.flogin.webtruyen.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.DisabledException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.web.WebAttributes;
 import org.springframework.stereotype.Controller;
 
 import com.flogin.webtruyen.model.TaiKhoan;
@@ -9,13 +14,16 @@ import com.flogin.webtruyen.repository.VaiTroRepository;
 import com.flogin.webtruyen.service.TaiKhoanService;
 
 import org.springframework.ui.Model;
+
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.bind.annotation.RequestBody;
-
+import org.springframework.security.authentication.LockedException;
 
 
 
@@ -27,8 +35,29 @@ public class UserLoginController {
     @Autowired
     VaiTroRepository repoVaiTro;
 
-    @GetMapping("/dang-nhap")
-    public String login() {
+@   GetMapping("/dang-nhap")
+    public String login(@RequestParam(value = "error", required = false) String error, 
+                        HttpServletRequest request, 
+                        Model model) {
+                        
+        if (error != null) {
+            String thongBaoLoi = "Sai tài khoản hoặc mật khẩu! Vui lòng thử lại."; 
+
+            // Móc Session ra xem Spring chửi lỗi gì
+HttpSession session = request.getSession(false);
+            if (session != null) {
+                AuthenticationException ex = (AuthenticationException) session.getAttribute(WebAttributes.AUTHENTICATION_EXCEPTION);
+                if (ex != null) {
+                    // Gom chung 2 thằng Locked và Disabled vào cùng 1 câu chửi
+                    if (ex instanceof DisabledException || ex instanceof LockedException) {
+                        thongBaoLoi = "Tài khoản của bạn đã bị khóa! Liên hệ ADMIN để mở khóa.";
+                    } else if (ex instanceof BadCredentialsException) {
+                        thongBaoLoi = "Sai tài khoản hoặc mật khẩu! Vui lòng thử lại.";
+                    }
+                }
+            }
+            model.addAttribute("loi", thongBaoLoi);
+        }
         return "user/login_user";
     }
     

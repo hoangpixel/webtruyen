@@ -65,8 +65,8 @@
                                     <th class="ps-4" style="width: 10%;">ID</th>
                                     <th style="width: 20%;">Tên Vai Trò</th>
                                     <th style="width: 25%;">Mô Tả</th>
-                                    <th style="width: 35%;">Các Quyền Hạn (Permissions)</th>
-                                    <th class="text-center" style="width: 10%;">Hành Động</th>
+                                    <th style="width: 25%;">Các Quyền Hạn</th>
+                                    <th class="text-center" style="width: 20%;">Hành Động</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -78,26 +78,70 @@
                                         <span class="fw-bold text-info fs-5" th:text="${vt.tenVaiTro}">ADMIN</span>
                                     </td>
 
-                                    <td class="text-muted" th:text="${vt.moTa}">Quản trị viên tối cao</td>
+                                    <td class="text-muted" th:text="${vt.moTa}">GOAT</td>
 
-                                    <!-- CỘT QUYỀN HẠN (Loop huy hiệu) -->
                                     <td>
                                         <div class="d-flex flex-wrap gap-1">
-                                            <span th:each="q : ${vt.danhSachQuyen}" 
+                                            <span th:each="q, iterStat : ${vt.danhSachQuyen}" 
+                                                  th:if="${iterStat.index < 6}"
                                                   class="badge bg-secondary border border-secondary-subtle"
                                                   th:text="${q.tenQuyen}">
                                             </span>
-                                            <span th:if="${#lists.isEmpty(vt.danhSachQuyen)}" class="badge bg-dark text-muted">CHƯA CẤP QUYỀN</span>
+                                            
+                                            <span th:if="${#lists.size(vt.danhSachQuyen) > 6}" 
+                                                  class="badge bg-dark border border-secondary-subtle"
+                                                  title="Xem chi tiết để thấy đầy đủ">
+                                                ...
+                                            </span>
+                                            
+                                            <span th:if="${#lists.isEmpty(vt.danhSachQuyen)}" class="badge bg-secondary-subtle text-secondary border border-secondary-subtle">CHƯA CẤP QUYỀN</span>
                                         </div>
                                     </td>
 
                                     <td class="text-center">
+                                        <button class="btn btn-sm btn-outline-info" data-bs-toggle="modal" th:attr="data-bs-target='#modalChiTietVaiTro_' + ${vt.id}" title="Xem Chi Tiết"><i class="bi bi-eye"></i></button>
                                         <!-- Nút Sửa -->
                                         <button sec:authorize="hasAuthority('SUA_VAI_TRO')" class="btn btn-sm btn-outline-warning mx-1" data-bs-toggle="modal" th:attr="data-bs-target='#modalSuaVaiTro_' + ${vt.id}" title="Thiết Lập Quyền"><i class="bi bi-pencil-square"></i></button>
                                         <!-- Nút Xóa (Nếu là ADMIN thì không cho xóa) -->
                                         <button sec:authorize="hasAuthority('XOA_VAI_TRO')" th:if="${vt.tenVaiTro != 'ADMIN'}" class="btn btn-sm btn-outline-danger" data-bs-toggle="modal" th:attr="data-bs-target='#modalXoaVaiTro_' + ${vt.id}" title="Xóa Vai Trò"><i class="bi bi-trash"></i></button>
                                         <button th:if="${vt.tenVaiTro == 'ADMIN'}" class="btn btn-sm btn-outline-secondary" disabled title="Vai trò gốc không thể xóa"><i class="bi bi-trash"></i></button>
                                     </td>
+
+
+                                    <!-- MODAL CHI TIẾT VAI TRÒ (MỚI) -->
+                                    <div class="modal fade" th:id="'modalChiTietVaiTro_' + ${vt.id}" tabindex="-1">
+                                        <div class="modal-dialog modal-dialog-centered">
+                                            <div class="modal-content bg-body-tertiary">
+                                                <div class="modal-header border-bottom border-info">
+                                                    <h5 class="modal-title fw-bold text-info"><i class="bi bi-info-circle-fill"></i> Chi Tiết Vai Trò: [[${vt.tenVaiTro}]]</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                                </div>
+                                                <div class="modal-body text-start">
+                                                    <p class="mb-3">
+                                                        <strong class="text-info"><i class="bi bi-card-text"></i> Mô tả chức vụ:</strong><br>
+                                                        <span th:text="${vt.moTa}"></span>
+                                                    </p>
+                                                    
+                                                    <hr class="border-secondary opacity-25">
+                                                    
+                                                    <p class="fw-bold mb-2 text-info"><i class="bi bi-shield-lock"></i> Danh sách Quyền hạn ([[${#lists.size(vt.danhSachQuyen)}]]):</p>
+                                                    
+                                                    <!-- Box hiển thị full quyền hạn -->
+                                                    <div class="d-flex flex-wrap gap-2 p-3 bg-body-tertiary rounded border border-secondary-subtle" style="max-height: 250px; overflow-y: auto;">
+                                                        <span th:each="q : ${vt.danhSachQuyen}" 
+                                                              class="badge bg-secondary border border-secondary-subtle fs-6"
+                                                              th:title="${q.moTa}"
+                                                              th:text="${q.tenQuyen}">
+                                                        </span>
+                                                        <span th:if="${#lists.isEmpty(vt.danhSachQuyen)}" class="text-muted fst-italic">Vai trò này chưa được cấp quyền nào.</span>
+                                                    </div>
+                                                </div>
+                                                <div class="modal-footer border-top">
+                                                    <button type="button" class="btn btn-secondary fw-bold" data-bs-dismiss="modal">Đóng</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
 
                                     <!-- MODAL SỬA VAI TRÒ & PHÂN QUYỀN -->
                                     <div class="modal fade" th:id="'modalSuaVaiTro_' + ${vt.id}" tabindex="-1">

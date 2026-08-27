@@ -63,11 +63,11 @@
                                     <th>Tác Giả</th>
                                     <th>Trạng Thái</th>
                                     <th>Thể Loại</th>
+                                    <th>Lượt Xem</th>
                                     <th class="text-center">Hành Động</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <!-- 1. BẮT ĐẦU VÒNG LẶP -->
                                 <tr th:each="truyen : ${danhSachTruyen}">
                                     <td class="ps-4 fw-bold" th:text="${truyen.id}">1</td>
                                     <td><img th:src="@{'/images/truyen/' + ${truyen.anhBia}}" class="truyen-thumb"></td>
@@ -76,23 +76,28 @@
                                     <td><span class="badge bg-success" th:text="${truyen.trangThai}">Đang ra</span></td>
                                     <td>
                                         <div class="d-flex flex-wrap gap-1" style="max-width: 250px;">
-                                            <!-- Lặp qua danh sách thể loại của truyện này để in huy hiệu -->
-                                            <span th:each="tl : ${truyen.danhSachTheLoai}" 
+                                            <span th:each="tl, iterStat : ${truyen.danhSachTheLoai}" 
+                                                  th:if="${iterStat.index < 6}"
                                                   class="badge bg-secondary border border-secondary-subtle" 
                                                   th:text="${tl.tenTheLoai}">
                                             </span>
-                                            <!-- Báo trống nếu truyện chưa được gắn thể loại nào -->
+                                            
+                                            <span th:if="${#lists.size(truyen.danhSachTheLoai) > 6}" 
+                                                  class="badge bg-dark border border-secondary-subtle" 
+                                                  title="Xem chi tiết để thấy đầy đủ">
+                                                ...
+                                            </span>
+                                            
                                             <span th:if="${#lists.isEmpty(truyen.danhSachTheLoai)}" class="text-muted small fst-italic">Chưa có thể loại</span>
                                         </div>
-                                    </td>           
+                                    </td>  
+                                    <td th:text="${truyen.luotXem}">9999999</td>
                                     <td class="text-center">
-                                        <!-- Nút gọi Modal -->
                                         <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" th:attr="data-bs-target='#modalChiTiet_' + ${truyen.id}" title="Chi tiết"><i class="bi bi-eye"></i></button>
                                         <button sec:authorize="hasAuthority('SUA_TRUYEN')" class="btn btn-sm btn-outline-warning mx-1" data-bs-toggle="modal" th:attr="data-bs-target='#modalSua_' + ${truyen.id}" title="Sửa"><i class="bi bi-pencil-square"></i></button>
                                         <button sec:authorize="hasAuthority('XOA_TRUYEN')" class="btn btn-sm btn-outline-danger" data-bs-toggle="modal" th:attr="data-bs-target='#modalXoa_' + ${truyen.id}" title="Xóa"><i class="bi bi-trash"></i></button>
                                     </td>
 
-                                    <!-- ================= LỒNG MODAL NGAY TRONG VÒNG LẶP ================= -->
 
                                     <!-- MODAL CHI TIẾT -->
                                     <div class="modal fade" th:id="'modalChiTiet_' + ${truyen.id}" tabindex="-1">
@@ -171,14 +176,21 @@
                                                         </div>
                                                         <div class="col-6 mb-3">
                                                             <label class="form-label fw-bold text-info">Thể loại</label>
-                                                                <div class="role-checkbox-box">
-                                                                        <div class="form-check" th:each="theLoai : ${danhSachTheLoai}">
-                                                                            <input class="form-check-input" type="checkbox" name="theLoaiIds" 
-                                                                                    th:value="${theLoai.id}" 
-                                                                                    th:checked="${truyen.hasTheLoai(theLoai.id)}">
-                                                                            <label class="form-check-label" th:text="${theLoai.tenTheLoai}"></label>
-                                                                        </div>
+                                                            <!-- Ô nhập tìm kiếm -->
+                                                            <input type="text" class="form-control form-control-sm mb-2 tim-kiem-the-loai" placeholder="Tìm nhanh thể loại...">
+                                                            
+                                                                <div class="role-checkbox-box bg-body-tertiary p-2 rounded border border-secondary-subtle" style="max-height: 180px; overflow-y: auto;">                                                                <div class="form-check" th:each="theLoai : ${danhSachTheLoai}">
+                                                                    <!-- Cấp ID duy nhất (Sửa) -->
+                                                                    <input class="form-check-input" type="checkbox" name="theLoaiIds" 
+                                                                           th:value="${theLoai.id}" 
+                                                                           th:checked="${truyen.hasTheLoai(theLoai.id)}"
+                                                                           th:id="'checkTheLoaiSua_' + ${truyen.id} + '_' + ${theLoai.id}">
+                                                                    <!-- Dùng th:for để nối với ID của input -->
+                                                                    <label class="form-check-label w-100" style="cursor: pointer;" 
+                                                                           th:for="'checkTheLoaiSua_' + ${truyen.id} + '_' + ${theLoai.id}" 
+                                                                           th:text="${theLoai.tenTheLoai}"></label>
                                                                 </div>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                     
@@ -241,7 +253,7 @@
         </div>
     </div>
 
-<!-- 1. MODAL THÊM TRUYỆN (Nằm ngoài vòng lặp) -->
+<!-- 1. MODAL THÊM TRUYỆN -->
     <div class="modal fade" id="modalThem" tabindex="-1">
         <!-- Đã thêm class modal-dialog-centered vào đây -->
         <div class="modal-dialog modal-lg modal-dialog-centered">
@@ -282,13 +294,21 @@
                         </div>
                         <div class="col-6 mb-3">
                             <label class="form-label fw-bold text-info">Thể loại</label>
-                                <div class="role-checkbox-box">
-                                        <div class="form-check" th:each="theLoai : ${danhSachTheLoai}">
-                                            <input class="form-check-input" type="checkbox" name="theLoaiIds" 
-                                                    th:value="${theLoai.id}" >
-                                            <label class="form-check-label" th:text="${theLoai.tenTheLoai}"></label>
-                                        </div>
+                            <!-- Ô nhập tìm kiếm -->
+                            <input type="text" class="form-control form-control-sm mb-2 tim-kiem-the-loai" placeholder="Tìm nhanh thể loại...">
+                            
+                            <div class="role-checkbox-box bg-dark p-2 rounded border border-secondary-subtle" style="max-height: 180px; overflow-y: auto;">
+                                <div class="form-check" th:each="theLoai : ${danhSachTheLoai}">
+                                    <!-- Cấp ID duy nhất (Thêm) -->
+                                    <input class="form-check-input" type="checkbox" name="theLoaiIds" 
+                                           th:value="${theLoai.id}" 
+                                           th:id="'checkTheLoaiThem_' + ${theLoai.id}">
+                                    <!-- Dùng th:for để nối với ID -->
+                                    <label class="form-check-label w-100" style="cursor: pointer;" 
+                                           th:for="'checkTheLoaiThem_' + ${theLoai.id}" 
+                                           th:text="${theLoai.tenTheLoai}"></label>
                                 </div>
+                            </div>
                         </div>
                     </div>
                     <div class="modal-footer border-top">
@@ -361,6 +381,32 @@
                 preview.src = "";
                 preview.classList.add('d-none');
             }
+        });
+    </script>
+    <script>
+        // Kịch bản Tìm kiếm nhanh thể loại
+        document.addEventListener("DOMContentLoaded", function() {
+            // Tìm tất cả các ô nhập tìm kiếm
+            const cacOTimKiem = document.querySelectorAll('.tim-kiem-the-loai');
+            
+            cacOTimKiem.forEach(oNhap => {
+                oNhap.addEventListener('input', function() {
+                    const tuKhoa = this.value.toLowerCase().trim();
+                    // Lấy cái hộp cuộn chứa các checkbox nằm ngay bên dưới ô nhập
+                    const hopChua = this.nextElementSibling; 
+                    const danhSachTheLoai = hopChua.querySelectorAll('.form-check');
+                    
+                    // Vòng lặp ẩn/hiện
+                    danhSachTheLoai.forEach(dong => {
+                        const tenTheLoai = dong.querySelector('label').textContent.toLowerCase();
+                        if(tenTheLoai.includes(tuKhoa)) {
+                            dong.style.setProperty('display', 'block', 'important');
+                        } else {
+                            dong.style.setProperty('display', 'none', 'important');
+                        }
+                    });
+                });
+            });
         });
     </script>
 </body>

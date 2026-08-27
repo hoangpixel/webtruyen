@@ -123,7 +123,7 @@
                                                     <input type="hidden" name="id" th:value="${tk.id}">
 
                                                     <input type="hidden" name="username" th:value="${tk.username}">
-                                                    <input type="hidden" name="password" th:value="${tk.password}">
+                                                    <!-- <input type="hidden" name="password" th:value="${tk.password}"> -->
                                                     <input type="hidden" name="avatar" th:value="${tk.avatar}">
 
                                                     <div class="modal-header border-bottom border-warning">
@@ -148,7 +148,6 @@
                                                                 <label class="form-label fw-bold text-info">Cấp Vai Trò</label>
                                                                 <div class="role-checkbox-box">
                                                                     <div class="form-check" th:each="role : ${danhSachTatCaVaiTro}">
-                                                                        <!-- tk.hasRole() là cái hàm Java nãy anh em mình vừa viết đó -->
                                                                         <input class="form-check-input" type="checkbox" name="vaiTroIds" 
                                                                                th:value="${role.id}" 
                                                                                th:checked="${tk.hasRole(role.tenVaiTro)}">
@@ -176,7 +175,7 @@
                                         </div>
                                     </div>
 
-                                    <!-- MODAL XÓA TÀI KHOẢN (Giữ nguyên) -->
+                                    <!-- MODAL XÓA TÀI KHOẢN -->
                                     <div class="modal fade" th:id="'modalXoaTaiKhoan_' + ${tk.id}" tabindex="-1">
                                         <div class="modal-dialog modal-dialog-centered">
                                             <div class="modal-content bg-body-tertiary">
@@ -234,7 +233,7 @@
                     </div>
                     <div class="modal-body">
                         <div class="mb-3">
-                            <label class="form-label fw-bold">Username (Tài khoản đăng nhập) <span class="text-danger">*</span></label>
+                            <label class="form-label fw-bold">Tài khoản đăng nhập <span class="text-danger">*</span></label>
                             <input type="text" class="form-control" name="username" required>
                         </div>
                         <div class="mb-3">
