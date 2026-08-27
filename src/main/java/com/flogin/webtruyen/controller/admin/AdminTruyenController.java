@@ -38,7 +38,7 @@ public class AdminTruyenController {
     @GetMapping({"", "/"})
     public String loadDanhSachTruyen(@RequestParam(name="page", defaultValue = "1") int page, Model model) {
         
-        int tongSoSanPham = 2;
+        int tongSoSanPham = 10;
         Page<Truyen> pageAble = busTruyen.layDanhSachTheoPhanTrang(page, tongSoSanPham);
         List<TheLoai> dsTheLoai = busTheLoai.layDanhSach();
 
@@ -52,7 +52,7 @@ public class AdminTruyenController {
 
     @GetMapping("/tim-kiem")
     public String timKiemCoBan(@RequestParam(name="page", defaultValue = "1") int page,@RequestParam("search") String tuKhoa, Model model) {
-        int tongSoSanPham = 2;
+        int tongSoSanPham = 10;
         Page<Truyen> pageAble = busTruyen.timKiemCoBan(page, tongSoSanPham, tuKhoa);
 
         model.addAttribute("danhSachTruyen", pageAble.getContent());

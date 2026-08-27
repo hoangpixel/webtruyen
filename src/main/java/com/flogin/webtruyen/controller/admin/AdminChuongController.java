@@ -40,8 +40,30 @@ public class AdminChuongController {
 
     @GetMapping({"", "/"})
     public String loadDanhSachChuong(@RequestParam(name="page", defaultValue = "1") int page,Model model) {
-        int soLuong = 12;
+        int soLuong = 10;
         Page<Chuong> pageChuong = busChuong.layDanhSachCoPhanTrang(page, soLuong);
+        List<Truyen> danhSachTruyen = busTruyen.layDanhSach();
+
+        model.addAttribute("danhSachTruyen", danhSachTruyen);
+        model.addAttribute("danhSachChuong", pageChuong.getContent());
+        model.addAttribute("trangHienTai", page);
+        model.addAttribute("tongSoTrang", pageChuong.getTotalPages());
+
+        return "admin/chuong_admin";
+    }
+
+    @GetMapping("/tim-kiem")
+    public String timKiemCoBan(@RequestParam(name="page", defaultValue = "1") int page,@RequestParam("search") String tuKhoa, Model model) {
+        int soLuong = 10;
+        Page<Chuong> pageChuong;
+
+        if (tuKhoa != null && !tuKhoa.trim().isEmpty()) {
+            pageChuong = busChuong.timKiemCoban(page, soLuong, tuKhoa);
+            model.addAttribute("tuKhoa", tuKhoa);
+        } else {
+            pageChuong = busChuong.layDanhSachCoPhanTrang(page, soLuong);
+        }
+
         List<Truyen> danhSachTruyen = busTruyen.layDanhSach();
 
         model.addAttribute("danhSachTruyen", danhSachTruyen);

@@ -27,4 +27,9 @@ public interface TruyenRepository extends JpaRepository<Truyen, Integer>{
                                 @Param("tacGia") String tacGia, 
                                 @Param("theLoaiIds") List<Integer> theLoaiIds, 
                                 Pageable pageable);
+
+        List<Truyen> findTop5ByOrderByLuotXemDesc();
+
+        @Query("SELECT tl.tenTheLoai, COUNT(t.id) FROM Truyen t JOIN t.danhSachTheLoai tl GROUP BY tl.tenTheLoai")
+        List<Object[]> thongKeTruyenTheoTheLoai();
 }

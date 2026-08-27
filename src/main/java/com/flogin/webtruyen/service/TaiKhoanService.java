@@ -132,4 +132,9 @@ public class TaiKhoanService {
     {
         return repo.existsByEmailAndIdNot(email, id);
     }
+
+    public long tongTaiKhoan()
+    {
+        return repo.count();
+    }
 }

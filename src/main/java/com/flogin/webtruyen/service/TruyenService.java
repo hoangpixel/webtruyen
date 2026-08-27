@@ -143,4 +143,19 @@ public class TruyenService {
         }
         return false;
     }
+
+    public long tongTruyen()
+    {
+        return repo.count();
+    }
+
+    public List<Truyen> layDanhSachTop5TruyenHot()
+    {
+        return repo.findTop5ByOrderByLuotXemDesc();
+    }
+
+    public List<Object[]> thongKeTruyenTheoTheLoai()
+    {
+        return repo.thongKeTruyenTheoTheLoai();
+    }
 }   

@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" data-bs-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản Lý Tương Tác - Tàng Kinh Các</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    
+    <style>
+        #wrapper { display: flex; width: 100%; overflow-x: hidden; }
+        #sidebar { min-width: 260px; max-width: 260px; min-height: 100vh; background-color: var(--bs-tertiary-bg); transition: all 0.3s; }
+        #sidebar.toggled { margin-left: -260px; }
+        #content-wrapper { width: 100%; transition: all 0.3s; }
+        .text-hot { color: #ff5722; }
+        .table-hover tbody tr:hover { background-color: rgba(255, 87, 34, 0.05); }
+        .nav-link { color: var(--bs-body-color); padding: 15px 20px; font-weight: 500; transition: 0.2s; }
+        .nav-link:hover, .nav-link.active { background-color: rgba(255, 87, 34, 0.1); color: #ff5722; border-left: 4px solid #ff5722; }
+        .star-rating i { color: #ffc107; }
+    </style>
+</head>
+<body>
+
+    <div id="wrapper">
+        <div th:replace="~{fragments/admin_sidebar :: sidebar}"></div>
+
+        <div id="content-wrapper">
+            <div th:replace="~{fragments/admin_topbar :: topbar}"></div>
+
+            <div class="container-fluid p-4">
+                
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h3 class="fw-bold m-0"><i class="bi bi-chat-square-text-fill text-hot"></i> Quản Lý Tương Tác</h3>
+                    
+                    <div class="d-flex gap-2">
+                        <form th:action="@{/admin/quan-ly-danh-gia-va-binh-luan}" method="GET" class="d-flex">
+                            <input class="form-control" name="search" type="search" th:value="${tuKhoa}" placeholder="Tìm tên người dùng...">
+                            <button class="btn btn-outline-info ms-2" type="submit"><i class="bi bi-search"></i></button>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="card shadow mb-4">
+                    <div class="card-body">
+                        <!-- THANH ĐIỀU HƯỚNG TABS -->
+                        <ul class="nav nav-tabs" id="myTab" role="tablist">
+                            <li class="nav-item" role="presentation">
+                                <!-- Chú ý: Chỉ active khi activeTab là 'binhluan' HOẶC null (mặc định) -->
+                                <button class="nav-link fw-bold text-body" th:classappend="${activeTab == 'binhluan' or activeTab == null ? 'active' : ''}" id="binhluan-tab" data-bs-toggle="tab" data-bs-target="#binhluan" type="button" role="tab"><i class="bi bi-chat-dots text-primary"></i> Bình Luận</button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <!-- Chú ý: Chỉ active khi activeTab CHÍNH XÁC LÀ 'danhgia' -->
+                                <button class="nav-link fw-bold text-body" th:classappend="${activeTab == 'danhgia' ? 'active' : ''}" id="danhgia-tab" data-bs-toggle="tab" data-bs-target="#danhgia" type="button" role="tab"><i class="bi bi-star-fill text-warning"></i> Đánh Giá (Sao)</button>
+                            </li>
+                        </ul>
+
+                        <!-- NỘI DUNG TABS -->
+                        <div class="tab-content mt-4" id="myTabContent">
+                            
+                            <!-- ================= TAB 1: BÌNH LUẬN ================= -->
+                            <div class="tab-pane fade" th:classappend="${activeTab == 'binhluan' or activeTab == null ? 'show active' : ''}" id="binhluan" role="tabpanel">
+                                <div class="table-responsive">
+                                    <table th:if="${not #lists.isEmpty(danhSachBinhLuan)}" class="table table-bordered table-hover align-middle">
+                                        <thead class="text-center">
+                                            <tr>
+                                                <th style="width: 5%;">ID</th>
+                                                <th style="width: 20%;">Người Dùng</th>
+                                                <th style="width: 20%;">Truyện</th>
+                                                <th style="width: 30%;">Nội Dung</th>
+                                                <th style="width: 15%;">Thời Gian</th>
+                                                <th style="width: 10%;">Hành Động</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr th:each="bl : ${danhSachBinhLuan}">
+                                                <td class="text-center" th:text="${bl.id}"></td>
+                                                <td>
+                                                    <img th:src="@{'/images/avatar/' + ${bl.taiKhoan.avatar}}" class="rounded-circle me-2" style="width:30px; height:30px;">
+                                                    <strong th:text="${bl.taiKhoan.hoTen}"></strong>
+                                                </td>
+                                                <td th:text="${bl.truyen.tenTruyen}"></td>
+                                                <td>
+                                                    <span class="d-inline-block text-truncate" style="max-width: 200px;" th:text="${bl.noiDung}"></span>
+                                                </td>
+                                                <td class="text-center" th:text="${#temporals.format(bl.thoiGian, 'dd/MM/yyyy HH:mm')}"></td>
+                                                <td class="text-center">
+                                                    <button class="btn btn-sm btn-outline-info" data-bs-toggle="modal" th:attr="data-bs-target='#modalChiTietBinhLuan_' + ${bl.id}" title="Đọc toàn bộ"><i class="bi bi-eye"></i></button>
+                                                    <button sec:authorize="hasAuthority('XOA_DANH_GIA')" class="btn btn-sm btn-outline-danger" data-bs-toggle="modal" th:attr="data-bs-target='#modalXoaBinhLuan_' + ${bl.id}" title="Xóa"><i class="bi bi-trash"></i></button>
+                                                </td>
+
+                                                <!-- Modal Chi Tiết Bình Luận -->
+                                                <div class="modal fade" th:id="'modalChiTietBinhLuan_' + ${bl.id}" tabindex="-1">
+                                                    <div class="modal-dialog modal-dialog-centered">
+                                                        <div class="modal-content bg-body-tertiary">
+                                                            <div class="modal-header border-bottom border-info">
+                                                                <h5 class="modal-title fw-bold text-info"><i class="bi bi-chat-text"></i> Chi Tiết Bình Luận</h5>
+                                                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                                            </div>
+                                                            <div class="modal-body text-start">
+                                                                <p><strong>Người dùng:</strong> <span th:text="${bl.taiKhoan.hoTen}"></span></p>
+                                                                <p><strong>Truyện:</strong> <span th:text="${bl.truyen.tenTruyen}"></span></p>
+                                                                <p><strong>Thời gian:</strong> <span th:text="${#temporals.format(bl.thoiGian, 'dd/MM/yyyy HH:mm')}"></span></p>
+                                                                <p><strong>Nội dung:</strong></p>
+                                                                <div class="p-3 border rounded bg-light text-dark" th:text="${bl.noiDung}"></div>
+                                                            </div>
+                                                            <div class="modal-footer border-top">
+                                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <!-- Modal Xóa Bình Luận -->
+                                                <div class="modal fade" th:id="'modalXoaBinhLuan_' + ${bl.id}" tabindex="-1">
+                                                    <div class="modal-dialog modal-dialog-centered">
+                                                        <div class="modal-content bg-body-tertiary">
+                                                            <div class="modal-header border-bottom border-danger">
+                                                                <h5 class="modal-title fw-bold text-danger"><i class="bi bi-exclamation-triangle"></i> Xác nhận xóa</h5>
+                                                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                                            </div>
+                                                            <div class="modal-body text-start">
+                                                                Bạn có chắc chắn muốn xóa bình luận của <strong class="text-info" th:text="${bl.taiKhoan.hoTen}"></strong> trong truyện <strong class="text-info" th:text="${bl.truyen.tenTruyen}"></strong> không?
+                                                            </div>
+                                                            <div class="modal-footer border-top">
+                                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                                                                <a th:href="@{/admin/quan-ly-danh-gia-va-binh-luan/xoa-binh-luan/{id}(id=${bl.id})}" class="btn btn-danger fw-bold">Xác nhận Xóa</a>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                    <div th:if="${#lists.isEmpty(danhSachBinhLuan)}" class="text-center p-5">
+                                        <i class="bi bi-chat-slash display-1 text-secondary opacity-50 mb-3 d-block"></i>
+                                        <h4 class="fw-bold">Chưa có bình luận nào!</h4>
+                                    </div>
+                                </div>
+
+                                <div th:if="${tongSoTrangBL > 1}" class="mt-4 d-flex justify-content-center">
+                                    <div class="mt-4 d-flex justify-content-center">
+                                        <!-- Nối cứng tab=binhluan, kiểm tra tuKhoa để nối thêm search -->
+                                        <div th:replace="~{fragments/phan_trang :: phantrang(
+                                                duongDan='/admin/quan-ly-danh-gia-va-binh-luan?tab=binhluan' + (${tuKhoa != null and tuKhoa != ''} ? '&search=' + ${tuKhoa} : ''), 
+                                                trangHienTai=${trangHienTaiBL}, 
+                                                tongSoTrang=${tongSoTrangBL}
+                                        )}"></div>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            <!-- ================= TAB 2: ĐÁNH GIÁ ================= -->
+                            <div class="tab-pane fade" th:classappend="${activeTab == 'danhgia' ? 'show active' : ''}" id="danhgia" role="tabpanel">
+                                <div class="table-responsive">
+                                    <table th:if="${not #lists.isEmpty(danhSachDanhGia)}" class="table table-bordered table-hover align-middle">
+                                        <thead class="text-center">
+                                            <tr>
+                                                <th style="width: 10%;">ID</th>
+                                                <th style="width: 30%;">Người Dùng</th>
+                                                <th style="width: 30%;">Truyện</th>
+                                                <th style="width: 20%;">Số Sao</th>
+                                                <th style="width: 10%;">Hành Động</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr th:each="dg : ${danhSachDanhGia}">
+                                                <td class="text-center" th:text="${dg.id}"></td>
+                                                <td>
+                                                    <img th:src="@{'/images/avatar/' + ${dg.taiKhoan.avatar}}" class="rounded-circle me-2" style="width:30px; height:30px;">
+                                                    <strong th:text="${dg.taiKhoan.hoTen}"></strong>
+                                                </td>
+                                                <td th:text="${dg.truyen.tenTruyen}"></td>
+                                                <td class="text-center star-rating">
+                                                    <i th:each="i : ${#numbers.sequence(1, dg.diemSao)}" class="bi bi-star-fill"></i>
+                                                    <i th:if="${dg.diemSao < 5}" th:each="i : ${#numbers.sequence(dg.diemSao + 1, 5)}" class="bi bi-star text-secondary"></i>
+                                                </td>
+                                                <td class="text-center">
+                                                    <button sec:authorize="hasAuthority('XOA_DANH_GIA')" class="btn btn-sm btn-outline-danger" data-bs-toggle="modal" th:attr="data-bs-target='#modalXoaDanhGia_' + ${dg.id}" title="Xóa"><i class="bi bi-trash"></i></button>
+                                                </td>
+
+                                                <!-- Modal Xóa Đánh Giá -->
+                                                <div class="modal fade" th:id="'modalXoaDanhGia_' + ${dg.id}" tabindex="-1">
+                                                    <div class="modal-dialog modal-dialog-centered">
+                                                        <div class="modal-content bg-body-tertiary">
+                                                            <div class="modal-header border-bottom border-danger">
+                                                                <h5 class="modal-title fw-bold text-danger"><i class="bi bi-exclamation-triangle"></i> Xác nhận xóa</h5>
+                                                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                                            </div>
+                                                            <div class="modal-body text-start">
+                                                                Bạn có chắc chắn muốn xóa đánh giá của <strong class="text-info" th:text="${dg.taiKhoan.hoTen}"></strong> cho truyện <strong class="text-info" th:text="${dg.truyen.tenTruyen}"></strong> không?
+                                                            </div>
+                                                            <div class="modal-footer border-top">
+                                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                                                                <a th:href="@{/admin/quan-ly-danh-gia-va-binh-luan/xoa-danh-gia/{id}(id=${dg.id})}" class="btn btn-danger fw-bold">Xác nhận Xóa</a>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                    <div th:if="${#lists.isEmpty(danhSachDanhGia)}" class="text-center p-5">
+                                        <i class="bi bi-star-half display-1 text-secondary opacity-50 mb-3 d-block"></i>
+                                        <h4 class="fw-bold">Chưa có đánh giá nào!</h4>
+                                    </div>
+                                </div>
+
+                                    <div th:if="${tongSoTrangDG > 1}" class="mt-4 d-flex justify-content-center">
+                                        <div class="mt-4 d-flex justify-content-center">
+                                            <div th:replace="~{fragments/phan_trang :: phantrang(
+                                                    duongDan='/admin/quan-ly-danh-gia-va-binh-luan?tab=danhgia' + (${tuKhoa != null and tuKhoa != ''} ? '&search=' + ${tuKhoa} : ''), 
+                                                    trangHienTai=${trangHienTaiDG}, 
+                                                    tongSoTrang=${tongSoTrangDG}
+                                            )}"></div>
+                                        </div>
+                                    </div>
+
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- KHU VỰC THÔNG BÁO (TOAST) -->
+    <div th:if="${thongbao}" class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 1055;">
+        <div id="thongBaoToast" class="toast align-items-center text-bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="d-flex">
+                <div class="toast-body fw-bold">
+                    <i class="bi bi-check-circle-fill me-2"></i>
+                    <span th:text="${thongbao}"></span>
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+            </div>
+        </div>
+    </div>
+
+    <div th:if="${loi}" class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 1055;">
+        <div id="loiToast" class="toast align-items-center text-bg-danger border-0" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="d-flex">
+                <div class="toast-body fw-bold">
+                    <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                    <span th:text="${loi}"></span>
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script th:src="@{/user/js/doi_mau.js}"></script>
+
+    <script>
+        document.getElementById('sidebarCollapse').addEventListener('click', function () {
+            document.getElementById('sidebar').classList.toggle('toggled');
+        });
+
+        document.addEventListener("DOMContentLoaded", function() {
+            const tbElement = document.getElementById('thongBaoToast');
+            if(tbElement) new bootstrap.Toast(tbElement, { delay: 4000 }).show();
+            
+            const loiElement = document.getElementById('loiToast');
+            if(loiElement) new bootstrap.Toast(loiElement, { delay: 4000 }).show();
+        });
+    </script>
+</body>
+</html>

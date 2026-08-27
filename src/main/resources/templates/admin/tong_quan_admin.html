@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" data-bs-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tổng Quan - Tàng Kinh Các</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    
+    <style>
+        #wrapper { display: flex; width: 100%; overflow-x: hidden; }
+        
+        /* CSS Sidebar */
+        #sidebar { 
+            min-width: 260px; max-width: 260px; 
+            min-height: 100vh; 
+            background-color: var(--bs-tertiary-bg); 
+            border-right: 1px solid rgba(255,255,255,0.05);
+            transition: all 0.3s ease-in-out; 
+        }
+        #sidebar.toggled { margin-left: -260px; }
+        #content-wrapper { width: 100%; transition: all 0.3s; }
+        .nav-link { color: var(--bs-body-color); padding: 15px 20px; font-weight: 500; transition: 0.2s; border-left: 4px solid transparent; }
+        .nav-link:hover, .nav-link.active { 
+            background-color: rgba(255, 87, 34, 0.1); 
+            color: #ff5722; 
+            border-left: 4px solid #ff5722; 
+        }
+        .text-hot { color: #ff5722; }
+
+        /* CSS Thẻ Bài */
+        .card-stat { transition: transform 0.2s; border: none; border-radius: 12px; }
+        .card-stat:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
+        .icon-box { width: 50px; height: 50px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 24px; }
+    </style>
+</head>
+<body>
+
+    <div id="wrapper">
+        <!-- 1. GỌI BÙA FRAGMENT SIDEBAR -->
+        <div th:replace="~{fragments/admin_sidebar :: sidebar}"></div>
+
+        <div id="content-wrapper">
+            <!-- 2. GỌI BÙA FRAGMENT TOPBAR -->
+            <div th:replace="~{fragments/admin_topbar :: topbar}"></div>
+
+            <div class="container-fluid p-4">
+                <h3 class="fw-bold mb-4"><i class="bi bi-speedometer2 text-primary"></i> Tổng Quan Tàng Kinh Các</h3>
+
+                <!-- ================= KHU VỰC THẺ BÀI (5 THẺ) ================= -->
+                <div class="row row-cols-1 row-cols-md-3 row-cols-xl-5 g-3 mb-4">
+                    <div class="col">
+                        <div class="card card-stat bg-body-tertiary shadow-sm h-100 p-3">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <p class="text-muted mb-1 fw-bold">Tổng Truyện</p>
+                                    <h3 class="mb-0 fw-bold text-primary" th:text="${tongTruyen ?: 0}">0</h3>
+                                </div>
+                                <div class="icon-box bg-primary bg-opacity-10 text-primary"><i class="bi bi-book"></i></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="card card-stat bg-body-tertiary shadow-sm h-100 p-3">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <p class="text-muted mb-1 fw-bold">Tài Khoản</p>
+                                    <h3 class="mb-0 fw-bold text-success" th:text="${tongTaiKhoan ?: 0}">0</h3>
+                                </div>
+                                <div class="icon-box bg-success bg-opacity-10 text-success"><i class="bi bi-people"></i></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="card card-stat bg-body-tertiary shadow-sm h-100 p-3">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <p class="text-muted mb-1 fw-bold">Tổng Chương</p>
+                                    <h3 class="mb-0 fw-bold text-warning" th:text="${tongChuong ?: 0}">0</h3>
+                                </div>
+                                <div class="icon-box bg-warning bg-opacity-10 text-warning"><i class="bi bi-file-earmark-text"></i></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="card card-stat bg-body-tertiary shadow-sm h-100 p-3">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <p class="text-muted mb-1 fw-bold">Đánh Giá</p>
+                                    <h3 class="mb-0 fw-bold text-info" th:text="${tongDanhGia ?: 0}">0</h3>
+                                </div>
+                                <div class="icon-box bg-info bg-opacity-10 text-info"><i class="bi bi-star"></i></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="card card-stat bg-body-tertiary shadow-sm h-100 p-3">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <p class="text-muted mb-1 fw-bold">Bình Luận</p>
+                                    <h3 class="mb-0 fw-bold text-danger" th:text="${tongBinhLuan ?: 0}">0</h3>
+                                </div>
+                                <div class="icon-box bg-danger bg-opacity-10 text-danger"><i class="bi bi-chat-dots"></i></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ================= KHU VỰC BIỂU ĐỒ ================= -->
+                <div class="row g-3 mb-4">
+                    <!-- Biểu đồ cột -->
+                    <div class="col-lg-8">
+                        <div class="card bg-body-tertiary shadow-sm border-0 h-100">
+                            <div class="card-header border-0 bg-transparent pt-3">
+                                <h6 class="fw-bold"><i class="bi bi-bar-chart-fill text-primary"></i> Top 5 Truyện Nhiều Lượt Xem Nhất</h6>
+                            </div>
+                            <div class="card-body">
+                                <canvas id="barChart" height="100"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Biểu đồ tròn -->
+                    <div class="col-lg-4">
+                        <div class="card bg-body-tertiary shadow-sm border-0 h-100">
+                            <div class="card-header border-0 bg-transparent pt-3">
+                                <h6 class="fw-bold"><i class="bi bi-pie-chart-fill text-warning"></i> Tỉ Lệ Thể Loại</h6>
+                            </div>
+                            <div class="card-body d-flex justify-content-center">
+                                <canvas id="pieChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ================= KHU VỰC BẢNG TRUYỆN & TƯƠNG TÁC ================= -->
+                <div class="row g-3">
+                    <div class="col-lg-8">
+                        <div class="card bg-body-tertiary shadow-sm border-0 h-100">
+                            <div class="card-header border-0 bg-transparent pt-3 d-flex justify-content-between align-items-center">
+                                <h6 class="fw-bold m-0"><i class="bi bi-fire text-danger"></i> Bảng Xếp Hạng Truyện</h6>
+                            </div>
+                            <div class="card-body p-0 table-responsive">
+                                <table class="table table-hover align-middle mb-0">
+                                    <thead class="text-center">
+                                        <tr>
+                                            <th>Top</th>
+                                            <th class="text-start">Tên Truyện</th>
+                                            <th>Chương</th>
+                                            <th>Lượt Xem</th>
+                                            <th>Điểm TB</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="text-center">
+                                        <tr th:each="truyen, iterStat : ${topTruyen}">
+                                            <td>
+                                                <span class="badge rounded-pill" 
+                                                      th:classappend="${iterStat.count == 1 ? 'text-bg-danger' : (iterStat.count == 2 ? 'text-bg-warning' : (iterStat.count == 3 ? 'text-bg-info' : 'text-bg-secondary'))}" 
+                                                      th:text="'#' + ${iterStat.count}">#1</span>
+                                            </td>
+                                            <td class="text-start fw-bold text-primary" th:text="${truyen.tenTruyen}">Tên Truyện</td>
+                                            <td th:text="${#lists.size(truyen.danhSachChuong)}">0</td>
+                                            <td class="text-success fw-bold" th:text="${truyen.luotXem}">0</td>
+                                            <td><span class="badge text-bg-warning text-dark"><i class="bi bi-star-fill"></i> [[${truyen.diemTrungBinh}]]</span></td>
+                                        </tr>
+                                        <tr th:if="${#lists.isEmpty(topTruyen)}">
+                                            <td colspan="5" class="text-muted p-4">Chưa có dữ liệu truyện</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-4">
+                        <div class="card bg-body-tertiary shadow-sm border-0 h-100">
+                            <div class="card-header border-0 bg-transparent pt-3">
+                                <h6 class="fw-bold"><i class="bi bi-bell-fill text-info"></i> Tương Tác Mới Nhất</h6>
+                            </div>
+                            <div class="card-body p-2">
+                                <div class="list-group list-group-flush">
+                                    <div class="list-group-item bg-transparent border-bottom" th:each="bl : ${binhLuanMoi}">
+                                        <div class="d-flex w-100 align-items-center">
+                                            <img th:src="@{'/images/avatar/' + ${bl.taiKhoan.avatar}}" class="rounded-circle me-3" style="width:40px; height:40px; object-fit: cover;">
+                                            <div>
+                                                <h6 class="mb-0 fw-bold" th:text="${bl.taiKhoan.hoTen}">Tên User</h6>
+                                                <small class="text-muted">Đã bình luận vào <strong th:text="${bl.truyen.tenTruyen}">Truyện</strong></small>
+                                                <p class="mb-0 small text-truncate" style="max-width: 200px;" th:text="${bl.noiDung}">Nội dung...</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div th:if="${#lists.isEmpty(binhLuanMoi)}" class="text-center text-muted p-3">Chưa có bình luận nào</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Script -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script th:src="@{/user/js/doi_mau.js}"></script>
+
+    <script th:inline="javascript">
+        document.getElementById('sidebarCollapse').addEventListener('click', function () {
+            document.getElementById('sidebar').classList.toggle('toggled');
+        });
+
+        // Hứng dữ liệu từ Controller, bọc cẩn thận để không bị crash
+        /*<![CDATA[*/
+        const barLabels = /*[[${tenTruyenBarChart}]]*/ null || ['Chưa có dữ liệu'];
+        const barData = /*[[${luotXemBarChart}]]*/ null || [0];
+        
+        const pieLabels = /*[[${tenTheLoaiPieChart}]]*/ null || ['Chưa có dữ liệu'];
+        const pieData = /*[[${soLuongPieChart}]]*/ null || [1];
+        /*]]>*/
+
+        Chart.defaults.color = '#adb5bd';
+
+        // Vẽ Biểu Đồ Cột
+        const ctxBar = document.getElementById('barChart');
+        if(ctxBar) {
+            new Chart(ctxBar.getContext('2d'), {
+                type: 'bar',
+                data: {
+                    labels: barLabels,
+                    datasets: [{
+                        label: 'Lượt xem',
+                        data: barData,
+                        backgroundColor: 'rgba(54, 162, 235, 0.6)',
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                        borderWidth: 1,
+                        borderRadius: 5
+                    }]
+                },
+                options: { responsive: true, scales: { y: { beginAtZero: true } } }
+            });
+        }
+
+        // Vẽ Biểu Đồ Tròn
+        const ctxPie = document.getElementById('pieChart');
+        if(ctxPie) {
+            new Chart(ctxPie.getContext('2d'), {
+                type: 'doughnut',
+                data: {
+                    labels: pieLabels,
+                    datasets: [{
+                        data: pieData,
+                        backgroundColor: ['#ff6384', '#36a2eb', '#cc65fe', '#ffce56', '#4bc0c0'],
+                        borderWidth: 0
+                    }]
+                },
+                options: { responsive: true, cutout: '70%', plugins: { legend: { position: 'bottom' } } }
+            });
+        }
+    </script>
+</body>
+</html>

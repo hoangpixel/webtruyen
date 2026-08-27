@@ -25,6 +25,12 @@ public class ChuongService {
         return repoChuong.findAll(pageable);
     }
 
+    public Page<Chuong> timKiemCoban(int trangHienTai, int size, String tenTruyen)
+    {
+        Pageable pageable = PageRequest.of(trangHienTai - 1, size);
+        return repoChuong.findByTruyenTenTruyenContainingIgnoreCaseOrderByIdDesc(tenTruyen, pageable);
+    }
+
     public List<Chuong> layDanhSachChuongTheoTruyen(Truyen truyen)
     {
         return repoChuong.findByTruyenOrderBySoChuongDesc(truyen);
@@ -86,5 +92,10 @@ public class ChuongService {
     public Chuong layChuongDauTien(Truyen truyen)
     {
         return repoChuong.findFirstByTruyenOrderBySoChuongAsc(truyen);
+    }
+
+    public long tongChuong()
+    {
+        return repoChuong.count();
     }
 }

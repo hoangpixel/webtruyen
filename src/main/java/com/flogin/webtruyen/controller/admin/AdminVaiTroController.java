@@ -30,7 +30,6 @@ public class AdminVaiTroController {
     @GetMapping({"", "/"})
     public String loadDanhSach(Model model) {
         model.addAttribute("danhSachVaiTro", busVaiTro.layDanhSach());
-        // Lấy hết các Quyền (Thêm, Sửa, Xóa...) quăng ra HTML
         model.addAttribute("danhSachTatCaQuyen", repoQuyen.findAll()); 
         return "admin/vai_tro_admin";
     }

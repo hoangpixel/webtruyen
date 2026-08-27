@@ -121,7 +121,6 @@
                             </tbody>
                         </table>
 
-                        <!-- Báo rỗng -->
                         <div th:if="${#lists.isEmpty(danhSachTheLoai)}" class="text-center p-5">
                             <i class="bi bi-tags display-1 text-secondary opacity-50 mb-3 d-block"></i>
                             <h4 class="fw-bold">Chưa có thể loại nào!</h4>
@@ -129,7 +128,6 @@
                     </div>
                 </div>
 
-                <!-- Phân trang (Nếu ông có dùng) -->
                 <div th:if="${not #lists.isEmpty(danhSachTheLoai) and tongSoTrang != null}" class="mt-4 d-flex justify-content-center">
                     <div th:replace="~{fragments/phan_trang :: phantrang(
                             duongDan='/admin/quan-ly-the-loai', 
@@ -200,12 +198,10 @@
     <script th:src="@{/user/js/doi_mau.js}"></script>
 
     <script>
-        // JS Mở Sidebar
         document.getElementById('sidebarCollapse').addEventListener('click', function () {
             document.getElementById('sidebar').classList.toggle('toggled');
         });
 
-        // Bật Toast thông báo tự động
         document.addEventListener("DOMContentLoaded", function() {
             const tbElement = document.getElementById('thongBaoToast');
             if(tbElement) new bootstrap.Toast(tbElement, { delay: 4000 }).show();
