@@ -68,3 +68,36 @@ document.getElementById('btnShare').addEventListener('click', async () => {
         }
     }
 });
+
+// Hàm mở khóa danh sách bị ẩn
+function moRongDanhSach(classItemAn, classKhuVucNut) {
+    // 1. Tìm tất cả các dòng đang bị ẩn và lột bỏ class d-none
+    document.querySelectorAll(classItemAn).forEach(item => {
+        item.classList.remove('d-none');
+    });
+
+    // 2. Tàng hình luôn cái nút bấm sau khi đã hiển thị hết
+    const khuVucNut = document.querySelector(classKhuVucNut);
+    if (khuVucNut) {
+        khuVucNut.remove();
+    }
+}
+
+// Xử lý tự động hiện nút Xem Thêm cho Mô Tả
+document.addEventListener("DOMContentLoaded", function () {
+    const moTa = document.querySelector('.noi-dung-mo-ta');
+    const btnMoTa = document.querySelector('.nut-xem-them-mo-ta');
+
+    // Nếu chiều cao thực tế của đoạn văn lớn hơn chiều cao đang hiển thị (bị CSS cắt bớt)
+    if (moTa && moTa.scrollHeight > moTa.clientHeight) {
+        btnMoTa.classList.remove('d-none'); // Chữ dài quá thì mới hiện nút
+    }
+});
+
+// Hàm gắn vào nút onClick
+function moRongMoTa() {
+    // Xóa class rút gọn để chữ xổ ra hết
+    document.querySelector('.noi-dung-mo-ta').classList.remove('mo-ta-rut-gon');
+    // Xóa luôn cái nút
+    document.querySelector('.nut-xem-them-mo-ta').remove();
+}

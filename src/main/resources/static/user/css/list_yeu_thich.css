@@ -1,34 +1,49 @@
-        .card {
-            transition: 0.3s;
-            border: none;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
+.card {
+    transition: all 0.3s ease;
+    border: none;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
 
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 4px 15px rgba(255, 87, 34, 0.4);
-        }
+.card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 10px 20px rgba(255, 87, 34, 0.3);
+}
 
-        .truyen-bia {
-            height: 250px;
-            object-fit: cover;
-        }
+.truyen-bia {
+    height: 350px;
+    width: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+}
 
-        .text-hot {
-            color: #ff5722;
-            font-weight: bold;
-        }
+.card:hover .truyen-bia {
+    transform: scale(1.05);
+}
 
-        .btn-xoa {
-            opacity: 0.7;
-            transition: 0.3s;
-        }
+.btn-xoa {
+    opacity: 0;
+    transition: all 0.3s ease;
+    z-index: 10;
+    border-radius: 50%; 
+    width: 35px;
+    height: 35px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
 
-        .card:hover .btn-xoa {
-            opacity: 1;
-        }
+.card:hover .btn-xoa {
+    opacity: 1;
+}
 
-        .dropdown:hover .dropdown-menu {
-            display: block;
-            margin-top: 0;
-        }
+.text-hot {
+    color: #ff5722;
+    font-weight: bold;
+}
+
+.dropdown:hover .dropdown-menu {
+    display: block;
+    margin-top: 0;
+}

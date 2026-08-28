@@ -35,7 +35,7 @@ public class UserLoginController {
     @Autowired
     VaiTroRepository repoVaiTro;
 
-@   GetMapping("/dang-nhap")
+    @GetMapping("/dang-nhap")
     public String login(@RequestParam(value = "error", required = false) String error, 
                         HttpServletRequest request, 
                         Model model) {
@@ -43,8 +43,7 @@ public class UserLoginController {
         if (error != null) {
             String thongBaoLoi = "Sai tài khoản hoặc mật khẩu! Vui lòng thử lại."; 
 
-            // Móc Session ra xem Spring chửi lỗi gì
-HttpSession session = request.getSession(false);
+            HttpSession session = request.getSession(false);
             if (session != null) {
                 AuthenticationException ex = (AuthenticationException) session.getAttribute(WebAttributes.AUTHENTICATION_EXCEPTION);
                 if (ex != null) {
@@ -91,21 +90,27 @@ HttpSession session = request.getSession(false);
 
     @PostMapping("/xu-ly-dang-ky")
     public String dangKyTaiKhoan(@RequestParam String username, @RequestParam String password, @RequestParam String hoTen, @RequestParam String email,@RequestParam String confirmPassword ,Model model) {
-        if(bus.kiemTraTrungUsername(username)) 
+        if(bus.kiemTraTrungEmail(email))
         {
-            model.addAttribute("loiDangKy", "Tên đăng nhập đã tồn tại!");
+            model.addAttribute("loi", "Email đã tồn tại!");
             return "user/dang_ky";
         }
         
-        if(bus.kiemTraTrungEmail(email))
+        if(!username.matches("^[a-zA-Z0-9_]+$")) 
         {
-            model.addAttribute("loiDangKy", "Email đã tồn tại!");
+            model.addAttribute("loi", "Tên đăng nhập chỉ được chứa chữ cái, số và dấu gạch dưới (_), không được có dấu hoặc khoảng trắng!");
+            return "user/dang_ky";
+        }
+
+        if(bus.kiemTraTrungUsername(username)) 
+        {
+            model.addAttribute("loi", "Tên đăng nhập đã tồn tại!");
             return "user/dang_ky";
         }
         
         if(!bus.kiemTraTrungPassword(password, confirmPassword)) 
         {
-            model.addAttribute("loiDangKy", "Mật khẩu không khớp nhau!");
+            model.addAttribute("loi", "Mật khẩu không khớp nhau!");
             return "user/dang_ky";
         }
 

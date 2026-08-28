@@ -13,7 +13,8 @@
                            class="page-link-custom border-0 btn btn-outline-secondary btn-sm d-flex align-items-center justify-content-center"
                            style="width: 40px; height: 40px;"
                            th:classappend="${(trangHienTai ?: 1) <= 1 ? 'disabled' : ''}">
-                            <i class="bi bi-chevron-double-left text-dark"></i>
+                            <!-- Đã xóa text-dark để nó tự đổi màu -->
+                            <i class="bi bi-chevron-double-left"></i>
                         </a>
 
                         <!-- Nút < Lùi 1 trang -->
@@ -21,18 +22,19 @@
                            class="page-link-custom btn btn-outline-secondary btn-sm d-flex align-items-center justify-content-center"
                            style="width: 40px; height: 40px;"
                            th:classappend="${(trangHienTai ?: 1) <= 1 ? 'disabled' : ''}">
-                            <i class="bi bi-chevron-left text-dark"></i>
+                            <i class="bi bi-chevron-left"></i>
                         </a>
 
                         <!-- Ô Input nhập số trang -->
                         <span>
+                            <!-- Thêm bg-body-tertiary và text-body để input tự nhận diện Sáng/Tối -->
                             <input id="pageInput" type="number" min="1" 
                                    th:max="${tongSoTrang ?: 10}" 
                                    th:value="${trangHienTai ?: 1}"
-                                   class="form-control d-inline-block text-center border-secondary fw-bold" 
+                                   class="form-control d-inline-block text-center border-secondary fw-bold bg-body-tertiary text-body" 
                                    style="width: 60px; display: inline-block; box-shadow: none;"
                                    th:attr="data-url=${duongDan == ''} ? '' : @{${duongDan}}, data-max=${tongSoTrang ?: 10}"/>
-                            <span class="fw-bold mx-1">/ [[${tongSoTrang ?: 10}]]</span>
+                            <span class="fw-bold mx-1 text-body">/ [[${tongSoTrang ?: 10}]]</span>
                         </span>
 
                         <!-- Nút > Tiến 1 trang -->
@@ -40,7 +42,7 @@
                            class="page-link-custom btn btn-outline-secondary btn-sm d-flex align-items-center justify-content-center"
                            style="width: 40px; height: 40px;"
                            th:classappend="${(trangHienTai ?: 1) >= (tongSoTrang ?: 10) ? 'disabled' : ''}">
-                            <i class="bi bi-chevron-right text-dark"></i>
+                            <i class="bi bi-chevron-right"></i>
                         </a>
 
                         <!-- Nút >> Đến trang cuối -->
@@ -48,7 +50,7 @@
                            class="page-link-custom border-0 btn btn-outline-secondary btn-sm d-flex align-items-center justify-content-center"
                            style="width: 40px; height: 40px;"
                            th:classappend="${(trangHienTai ?: 1) >= (tongSoTrang ?: 10) ? 'disabled' : ''}">
-                            <i class="bi bi-chevron-double-right text-dark"></i>
+                            <i class="bi bi-chevron-double-right"></i>
                         </a>
 
                     </div>
@@ -71,7 +73,7 @@
                             if (page > maxPage) page = maxPage;
                             let dauNoi = baseUrl.includes('?') ? '&' : '?';
                             
-                           window.location.href = (baseUrl === '' ? '' : baseUrl) + dauNoi + "page=" + page;
+                            window.location.href = (baseUrl === '' ? '' : baseUrl) + dauNoi + "page=" + page;
                         }
                     });
                 }

@@ -29,24 +29,31 @@
         <div class="row">
             <div th:each="item : ${danhSachYeuThich}" class="col-6 col-md-3 mb-4">
                 <div class="card h-100 bg-body-tertiary position-relative">
-                     <a th:href="@{/bo-luu-truyen-yeu-thich/{id}(id=${item.id})}" class="btn btn-danger btn-sm position-absolute top-0 end-0 m-2 btn-xoa" title="Bỏ lưu">
-                        <i class="bi bi-heartbreak-fill"></i>
+                    
+                     <a th:href="@{/bo-luu-truyen-yeu-thich/{id}(id=${item.id})}" class="btn btn-danger position-absolute top-0 end-0 m-2 btn-xoa shadow" title="Bỏ lưu">
+                        <i class="bi bi-trash3-fill"></i>
                      </a>
                     
-                    <img th:src="@{'/images/truyen/' + ${item.truyen.anhBia}}" class="card-img-top truyen-bia" alt="Bìa truyện">
-                    <div class="card-body p-2 d-flex flex-column">
-                        <h6 class="card-title text-truncate mb-1" th:text="${item.truyen.tenTruyen}">Ta Là Tà Đế</h6>
-                        <small class="text-muted mb-2"><i class="bi bi-bookmark-check"></i> Đang theo dõi</small>
-                        <a th:href="@{/chi-tiet-truyen/{id}(id=${item.truyen.id})}" class="btn btn-outline-warning btn-sm mt-auto fw-bold">Xem Chi Tiết</a>
+                    <div class="overflow-hidden" style="border-top-left-radius: 12px; border-top-right-radius: 12px;">
+                        <a th:href="@{/chi-tiet-truyen/{tenTruyen}/{id}(tenTruyen=${item.truyen.slug}, id=${item.truyen.id})}">
+                            <img th:src="@{'/images/truyen/' + ${item.truyen.anhBia}}" class="card-img-top truyen-bia" alt="Bìa truyện">
+                        </a>
+                    </div>
+
+                    <div class="card-body p-3 text-center d-flex flex-column">
+                        <h6 class="card-title text-truncate mb-1 fw-bold text-info" th:text="${item.truyen.tenTruyen}">Ta Là Tà Đế</h6>
+                        <small class="text-muted mb-3"><i class="bi bi-bookmark-check-fill text-success"></i> Đang theo dõi</small>
+                        <a th:href="@{/chi-tiet-truyen/{tenTruyen}/{id}(tenTruyen=${item.truyen.slug}, id=${item.truyen.id})}" class="btn btn-outline-warning btn-sm mt-auto fw-bold w-100">Đọc Tiếp</a>
                     </div>
                 </div>
             </div>
             
-            <div class="col-12 text-center py-5" th:if="${danhSachYeuThich} == null">
-                <h1 class="text-muted"><i class="bi bi-inbox"></i></h1>
-                <p class="text-muted">Tủ truyện của bạn đang trống. Hãy ra trang chủ tìm truyện hay nhé!</p>
+            <div class="col-12 text-center py-5 mt-3 bg-body-tertiary rounded shadow-sm" th:if="${#lists.isEmpty(danhSachYeuThich)}">
+                <h1 class="text-muted mb-3" style="font-size: 5rem;"><i class="bi bi-inbox"></i></h1>
+                <h3 class="text-muted fw-bold">Tủ truyện đang trống!</h3>
+                <p class="text-muted mb-4">Đạo hữu chưa lưu bộ chân kinh nào. Hãy ra trang chủ tìm kiếm nhé!</p>
+                <a th:href="@{/}" class="btn btn-warning fw-bold"><i class="bi bi-house-door-fill"></i> Khám Phá Ngay</a>
             </div>
-
         </div>
     </div>
 

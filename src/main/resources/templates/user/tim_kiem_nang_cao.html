@@ -69,11 +69,16 @@
 
             <div th:unless="${danhSachTruyen == null or danhSachTruyen.isEmpty()}" th:each="truyen : ${danhSachTruyen}" class="col-6 col-md-3 mb-4">
                 <a th:href="@{/chi-tiet-truyen/{tenTruyen}/{id}(tenTruyen=${truyen.slug}, id=${truyen.id})}" class="text-decoration-none text-body">
-                    <div class="card card-truyen h-100 bg-body-tertiary">
-                        <img th:src="@{'/images/truyen/' + ${truyen.anhBia}}" class="card-img-top truyen-bia" alt="Bìa truyện">
-                        <div class="card-body p-2 text-center">
-                            <h6 class="card-title text-truncate mb-1" th:text="${truyen.tenTruyen}">Ta Là Tà Đế</h6>
-                            <small class="text-muted fw-bold text-danger" th:text="${truyen.chuongMoiNhat}">Chương 105</small>
+                    <div class="card card-truyen h-100 bg-body-tertiary position-relative">
+                        
+                        <span class="badge bg-danger badge-chapter fw-bold" th:text="${truyen.chuongMoiNhat}">Chương 105</span>
+                        
+                        <div class="overflow-hidden" style="border-top-left-radius: 12px; border-top-right-radius: 12px;">
+                            <img th:src="@{'/images/truyen/' + ${truyen.anhBia}}" class="card-img-top truyen-bia" alt="Bìa truyện">
+                        </div>
+
+                        <div class="card-body p-3 text-center">
+                            <h6 class="card-title text-truncate fw-bold text-info fs-6 mb-0" th:text="${truyen.tenTruyen}">Tên Truyện</h6>
                         </div>
                     </div>
                 </a>

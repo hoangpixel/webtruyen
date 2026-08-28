@@ -28,3 +28,11 @@
     .rating-stars .star:hover,
     .rating-stars .star:hover ~ .star {
     }
+
+    .mo-ta-rut-gon {
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
