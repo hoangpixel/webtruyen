@@ -4,45 +4,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Trang Chủ - Web Đọc Truyện</title>
-    <!-- Bootstrap 5.3 -->
+    <title>Trang Chủ</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
-    <style>
-        /* CSS giờ cực mỏng nhẹ vì Bootstrap lo hết màu sắc rồi */
-        .card { transition: 0.3s; border: none; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-        .card:hover { transform: translateY(-5px); box-shadow: 0 4px 15px rgba(255, 87, 34, 0.4); }
-        .truyen-bia { height: 250px; object-fit: cover; }
-        .text-hot { color: #ff5722; font-weight: bold; }
-        .dropdown:hover .dropdown-menu {
-            display: block;
-            margin-top: 0;
-        }
-    </style>
+    <link rel="stylesheet" th:href="@{/user/css/index.css}">
 </head>
 <body>
 
     <div th:replace="~{fragments/header :: navbar}"></div>
 
-    <!-- KHOẢNG TRỐNG NỘI DUNG CHÍNH -->
     <div class="container mt-4">
         
-<!-- 1. Nhúng CSS của SwiperJS -->
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
 
         <h4 th:if="${danhSachHot} != null" class="text-hot mb-3"><i class="bi bi-fire"></i> Top 10 bộ truyện HOT</h4>
         
-        <!-- 2. Khung Slider -->
         <div th:if="${danhSachHot} != null" class="swiper mySwiper mb-5">
             <div class="swiper-wrapper">
                 
-                <!-- Vòng lặp th:each giờ sẽ nằm ở thẻ swiper-slide -->
                 <div class="swiper-slide" th:each="truyen : ${danhSachHot}">
                     <div class="card h-100 bg-body-tertiary shadow-sm text-center">
                         <a th:href="@{/chi-tiet-truyen/{tenTruyen}/{id}(tenTruyen=${truyen.slug}, id=${truyen.id})}" class="text-decoration-none text-body">
-                            <!-- Bìa truyện -->
                             <img th:src="@{'/images/truyen/' + ${truyen.anhBia}}" class="card-img-top truyen-bia" alt="Bìa truyện" style="object-fit: cover; aspect-ratio: 2/3;">
                             
                             <div class="card-body p-2">
@@ -59,7 +42,6 @@
             <div class="swiper-button-prev" style="color: #ff5722;"></div>
         </div>
 
-        <!-- KHU VỰC MỚI CẬP NHẬT -->
         <h4 th:unless="${danhSachTruyen == null or danhSachTruyen.isEmpty()}" class="text-warning mb-3"><i class="bi bi-clock-history"></i> Mới Cập Nhật</h4>
 
         <div class="row">
@@ -86,8 +68,6 @@
             </div>
 
         </div>
-
-
 
         <!-- Phân trang -->
         <div th:replace="~{fragments/phan_trang :: phantrang(

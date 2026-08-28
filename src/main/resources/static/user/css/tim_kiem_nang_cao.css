@@ -1,0 +1,25 @@
+        .truyen-bia {
+            height: 250px;
+            object-fit: cover;
+            border-radius: 5px;
+        }
+
+        .text-hot {
+            color: #ff5722;
+            font-weight: bold;
+        }
+
+        .card-truyen {
+            transition: 0.3s;
+            border: none;
+        }
+
+        .card-truyen:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 15px rgba(255, 87, 34, 0.4);
+        }
+
+        .dropdown:hover .dropdown-menu {
+            display: block;
+            margin-top: 0;
+        }

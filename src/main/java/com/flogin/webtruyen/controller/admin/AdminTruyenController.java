@@ -88,7 +88,7 @@ public class AdminTruyenController {
                     truyen.setDanhSachTheLoai(new ArrayList<>());
                 }
 
-                if(truyen.getTenTruyen() == null)
+                if(truyen.getTenTruyen() == null || truyen.getTenTruyen().isBlank())
                 {
                     truyen.setTacGia("Đang cập nhật");
                 }

@@ -4,59 +4,30 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Quản Lý Vai Trò & Phân Quyền</title>
-    <!-- Bootstrap 5 -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
-
-    <style>
-        #wrapper { display: flex; width: 100%; overflow-x: hidden; }
-        #sidebar { min-width: 260px; max-width: 260px; min-height: 100vh; background-color: var(--bs-tertiary-bg); transition: all 0.3s; }
-        #sidebar.toggled { margin-left: -260px; }
-        #content-wrapper { width: 100%; transition: all 0.3s; }
-
-        .nav-link { color: var(--bs-body-color); padding: 15px 20px; font-weight: 500; transition: 0.2s; }
-        .nav-link:hover, .nav-link.active { background-color: rgba(255, 87, 34, 0.1); color: #ff5722; border-left: 4px solid #ff5722; }
-
-        .text-hot { color: #ff5722; font-weight: bold;}
-        .table-hover tbody tr:hover { background-color: rgba(255, 87, 34, 0.05); }
-        
-        /* Box chứa checkbox quyền cho gọn gàng */
-        .quyen-checkbox-box { 
-            max-height: 200px; 
-            overflow-y: auto; 
-            border: 1px solid var(--bs-border-color); 
-            border-radius: 0.375rem; 
-            padding: 15px; 
-            background-color: var(--bs-body-bg); 
-        }
-    </style>
+    <link rel="stylesheet" th:href="@{/admin/css/vai_tro.css}">
 </head>
 <body>
 
     <div id="wrapper">
-        <!-- Nhúng Sidebar -->
         <div th:replace="~{fragments/admin_sidebar :: sidebar}"></div>
 
         <div id="content-wrapper">
-            <!-- Nhúng Topbar -->
             <div th:replace="~{fragments/admin_topbar :: topbar}"></div>
 
-            <!-- NỘI DUNG CHÍNH -->
             <div class="container-fluid p-4">
 
-                <!-- Thanh công cụ -->
                 <div class="d-flex justify-content-between align-items-center mb-4">
                     <h3 class="fw-bold m-0"><i class="bi bi-diagram-3-fill text-hot"></i> Quản Lý Vai Trò</h3>
 
                     <div class="d-flex gap-2">
-                        <!-- Nút Mở Modal Thêm Vai Trò Mới -->
                         <button sec:authorize="hasAuthority('THEM_VAI_TRO')" class="btn btn-danger fw-bold" data-bs-toggle="modal" data-bs-target="#modalThemVaiTro">
                             <i class="bi bi-plus-lg"></i> Tạo Vai Trò
                         </button>
                     </div>
                 </div>
 
-                <!-- BẢNG DỮ LIỆU -->
                 <div class="card bg-body-tertiary border-0 shadow-sm rounded-4">
                     <div class="card-body p-0 table-responsive">
                         <table th:if="${not #lists.isEmpty(danhSachVaiTro)}" class="table table-hover align-middle mb-0">
@@ -303,20 +274,6 @@
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script th:src="@{/user/js/doi_mau.js}"></script>
-    <script>
-        // JS Mở Sidebar
-        document.getElementById('sidebarCollapse').addEventListener('click', function () {
-            document.getElementById('sidebar').classList.toggle('toggled');
-        });
-
-        // Bật Toast thông báo tự động
-        document.addEventListener("DOMContentLoaded", function() {
-            const tbElement = document.getElementById('thongBaoToast');
-            if(tbElement) new bootstrap.Toast(tbElement, { delay: 4000 }).show();
-            
-            const loiElement = document.getElementById('loiToast');
-            if(loiElement) new bootstrap.Toast(loiElement, { delay: 4000 }).show();
-        });
-    </script>
+    <script th:src="@{/admin/js/thong_bao.js}"></script>
 </body>
 </html>

@@ -1,0 +1,35 @@
+        body {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, rgba(33, 37, 41, 1) 0%, rgba(18, 18, 18, 1) 100%);
+        }
+
+        [data-bs-theme="light"] body {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        }
+
+        .login-card {
+            width: 100%;
+            max-width: 400px;
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .text-hot {
+            color: #ff5722;
+        }
+
+        .btn-hot {
+            background-color: #ff5722;
+            color: white;
+            border: none;
+            transition: 0.3s;
+        }
+
+        .btn-hot:hover {
+            background-color: #e64a19;
+            transform: translateY(-2px);
+        }

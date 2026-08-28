@@ -6,27 +6,7 @@
     <title>Quản Lý Truyện</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
-    
-    <style>
-        #wrapper { display: flex; width: 100%; overflow-x: hidden; }
-        #sidebar { min-width: 260px; max-width: 260px; min-height: 100vh; background-color: var(--bs-tertiary-bg); transition: all 0.3s; }
-        #sidebar.toggled { margin-left: -260px; }
-        #content-wrapper { width: 100%; transition: all 0.3s; }
-        .nav-link { color: var(--bs-body-color); padding: 15px 20px; font-weight: 500; transition: 0.2s; }
-        .nav-link:hover, .nav-link.active { background-color: rgba(255, 87, 34, 0.1); color: #ff5722; border-left: 4px solid #ff5722; }
-        .text-hot { color: #ff5722; }
-        .truyen-thumb { width: 50px; height: 70px; object-fit: cover; border-radius: 4px; }
-        .role-checkbox-box { 
-            max-height: 150px;
-            overflow-y: auto;
-            border: 1px solid var(--bs-border-color); 
-            border-radius: 0.375rem; 
-            padding: 10px; 
-            background-color: var(--bs-body-bg); 
-        }
-        .role-checkbox-box::-webkit-scrollbar { width: 6px; }
-        .role-checkbox-box::-webkit-scrollbar-thumb { background-color: #6c757d; border-radius: 10px; }
-    </style>
+    <link rel="stylesheet" th:href="@{/admin/css/truyen.css}">
 </head>
 <body>
 
@@ -347,19 +327,7 @@
             </div>
         </div>
     </div>
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            const tbElement = document.getElementById('thongBaoToast');
-            if(tbElement) {
-                new bootstrap.Toast(tbElement, { delay: 4000 }).show();
-            }
-            
-            const loiElement = document.getElementById('loiToast');
-            if(loiElement) {
-                new bootstrap.Toast(loiElement, { delay: 4000 }).show();
-            }
-        });
-    </script>
+
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
@@ -367,47 +335,11 @@
             document.getElementById('sidebar').classList.toggle('toggled');
         });
     </script>
-    <!-- File JS đổi màu -->
+
     <script th:src="@{/user/js/doi_mau.js}"></script>
-    <script>
-        document.getElementById('fileAnhThem').addEventListener('change', function(e) {
-            const file = e.target.files[0];
-            const preview = document.getElementById('previewAnhThem');
-            
-            if (file) {
-                preview.src = URL.createObjectURL(file);
-                preview.classList.remove('d-none');
-            } else {
-                preview.src = "";
-                preview.classList.add('d-none');
-            }
-        });
-    </script>
-    <script>
-        // Kịch bản Tìm kiếm nhanh thể loại
-        document.addEventListener("DOMContentLoaded", function() {
-            // Tìm tất cả các ô nhập tìm kiếm
-            const cacOTimKiem = document.querySelectorAll('.tim-kiem-the-loai');
-            
-            cacOTimKiem.forEach(oNhap => {
-                oNhap.addEventListener('input', function() {
-                    const tuKhoa = this.value.toLowerCase().trim();
-                    // Lấy cái hộp cuộn chứa các checkbox nằm ngay bên dưới ô nhập
-                    const hopChua = this.nextElementSibling; 
-                    const danhSachTheLoai = hopChua.querySelectorAll('.form-check');
-                    
-                    // Vòng lặp ẩn/hiện
-                    danhSachTheLoai.forEach(dong => {
-                        const tenTheLoai = dong.querySelector('label').textContent.toLowerCase();
-                        if(tenTheLoai.includes(tuKhoa)) {
-                            dong.style.setProperty('display', 'block', 'important');
-                        } else {
-                            dong.style.setProperty('display', 'none', 'important');
-                        }
-                    });
-                });
-            });
-        });
-    </script>
+
+    <script th:src="@{/admin/js/thong_bao.js}"></script>
+    <script th:src="@{/admin/js/tim_kiem_the_loai.js}"></script>
+    <script th:src="@{/admin/js/review_anh.js}"></script>
 </body>
 </html>

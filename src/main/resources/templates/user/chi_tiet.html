@@ -3,53 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chi Tiết Truyện - Tàng Kinh Các</title>
+    <title>Chi Tiết Truyện</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
-    
-    <style>
-        .bia-truyen { 
-            width: 100%; 
-            max-width: 220px;
-            border-radius: 10px; 
-            box-shadow: 0 4px 15px rgba(0,0,0,0.5); 
-            display: block;
-            margin: 0 auto;
-            object-fit: cover;
-            aspect-ratio: 2/3;
-        }
-        .text-hot { color: #ff5722; font-weight: bold; }
-        .chuong-list { max-height: 400px; overflow-y: auto; }
-        .chuong-item { text-decoration: none; color: inherit; padding: 10px; display: block; border-bottom: 1px solid rgba(255,255,255,0.1); transition: 0.2s; }
-        .chuong-item:hover { background-color: rgba(255, 87, 34, 0.1); color: #ff5722; padding-left: 15px; }
-                .dropdown:hover .dropdown-menu {
-            display: block;
-            margin-top: 0;
-        }
-        .rating-stars {
-    font-size: 2rem; /* Kích thước sao to rõ */
-    color: #ccc;     /* Màu xám mặc định khi chưa chọn */
-    cursor: pointer;
-}
-.rating-stars .star {
-    transition: color 0.2s ease-in-out;
-}
-/* Khi rê chuột vào sao nào, hoặc sao đó đã được chọn thì chuyển sang màu vàng */
-.rating-stars .star.active,
-.rating-stars .star:hover,
-.rating-stars .star:hover ~ .star {
-    /* Mẹo CSS: Xử lý màu sắc sáng lên */
-}
-    </style>
+    <link rel="stylesheet" th:href="@{/user/css/chi_tiet_truyen.css}">
 </head>
 <body>
 
     <div th:replace="~{fragments/header :: navbar}"></div>
 
-    <!-- NỘI DUNG CHÍNH -->
     <div class="container mt-4">
         
-        <!-- BREADCRUMB (Đường dẫn) -->
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a th:href="@{/}" class="text-decoration-none text-muted">Trang Chủ</a></li>
@@ -57,15 +21,26 @@
             </ol>
         </nav>
 
-        <!-- THÔNG TIN TRUYỆN -->
         <div class="row mt-4">
-            <!-- Cột trái: Ảnh bìa -->
             <div class="col-md-4 col-lg-3 mb-4 text-center">
                 <img th:src="@{'/images/truyen/' + ${infoTruyen.anhBia}}" class="bia-truyen mb-3" alt="Bìa truyện">
                 <div class="d-flex justify-content-center gap-2">
-                    <a th:href="@{/doc-truyen/{slug}/{idTruyen}/{idChuong}(slug=${infoTruyen.slug}, idTruyen=${infoTruyen.id}, idChuong=1)}" class="btn btn-danger w-100 fw-bold">
+                    <!-- <a th:href="@{/doc-truyen/{slug}/{idTruyen}/{idChuong}(slug=${infoTruyen.slug}, idTruyen=${infoTruyen.id}, idChuong=1)}" class="btn btn-danger w-100 fw-bold">
                         <i class="bi bi-book"></i> ĐỌC TỪ ĐẦU
-                    </a>
+                    </a> -->
+                    <th:block th:if="${not #lists.isEmpty(infoTruyen.danhSachChuong)}">
+                        <a th:with="chuongDau=${infoTruyen.danhSachChuong[#lists.size(infoTruyen.danhSachChuong) - 1]}"
+                           th:href="@{/doc-truyen/{slug}/{idTruyen}/{idChuong}(slug=${infoTruyen.slug}, idTruyen=${infoTruyen.id}, idChuong=${chuongDau.id})}" 
+                           class="btn btn-danger w-100 fw-bold">
+                            <i class="bi bi-book"></i> ĐỌC TỪ ĐẦU
+                        </a>
+                    </th:block>
+
+                    <th:block th:if="${#lists.isEmpty(infoTruyen.danhSachChuong)}">
+                        <button class="btn btn-secondary w-100 fw-bold" disabled>
+                            <i class="bi bi-book"></i> CHƯA CÓ CHƯƠNG
+                        </button>
+                    </th:block>
                 </div>
                 <div class="d-flex justify-content-center gap-2 mt-2">
                     <a th:href="@{/luu-truyen-yeu-thich/{id}(id=${infoTruyen.id})}" class="btn btn-outline-warning w-50"><i class="bi bi-bookmark-heart"></i> LƯU</a>
@@ -226,96 +201,7 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script th:src="@{/user/js/doi_mau.js}"></script>
-<script>
-        const stars = document.querySelectorAll('#star-container .star');
-        const diemSaoInput = document.getElementById('diemSaoInput');
-
-        stars.forEach((star, index) => {
-            // Lướt chuột
-            star.addEventListener('mouseover', () => {
-                resetStars();
-                highlightStars(index + 1);
-            });
-
-            // Rút chuột ra
-            document.getElementById('star-container').addEventListener('mouseleave', () => {
-                resetStars();
-                highlightStars(diemSaoInput.value);
-            });
-
-            // Click chốt sao
-            star.addEventListener('click', () => {
-                const val = star.getAttribute('data-value');
-                diemSaoInput.value = val;
-                highlightStars(val);
-            });
-        });
-
-        function highlightStars(count) {
-            for(let i = 0; i < count; i++) {
-                stars[i].classList.remove('text-secondary');
-                stars[i].classList.add('text-warning');
-            }
-        }
-
-        function resetStars() {
-            stars.forEach(s => {
-                s.classList.remove('text-warning');
-                s.classList.add('text-secondary');
-            });
-        }
-        
-        // Chạy lần đầu để set màu sao mặc định (hoặc sao cũ)
-        const initialStars = document.getElementById('diemSaoInput').value;
-        highlightStars(initialStars);
-
-// Xử lý nút Chia sẻ (Có phân biệt Điện thoại / Máy tính)
-        document.getElementById('btnShare').addEventListener('click', async () => {
-            // 1. Kiểm tra xem người dùng đang xài Điện thoại hay Máy tính
-            const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-
-            // 2. Nếu là Điện thoại và trình duyệt có hỗ trợ share
-            if (isMobile && navigator.share) {
-                try {
-                    await navigator.share({
-                        title: 'Đọc truyện hay trên Tàng Kinh Các',
-                        text: 'Vào đọc thử siêu phẩm này đi đạo hữu ơi!',
-                        url: window.location.href
-                    });
-                } catch (err) {
-                    console.error('Lỗi chia sẻ: ', err);
-                }
-            } 
-            // 3. Nếu là Máy tính thì ép Copy Link luôn, không thèm xài bảng Share của Windows
-            else {
-                try {
-                    await navigator.clipboard.writeText(window.location.href);
-                    alert("Đã copy link truyện! Mở khung chat dán (Ctrl+V) gửi cho bạn bè ngay nhé.");
-                } catch (err) {
-                    console.error('Lỗi copy: ', err);
-                    alert("Trình duyệt không hỗ trợ copy tự động, bạn hãy copy link trên thanh địa chỉ nhé!");
-                }
-            }
-        });
-    </script>
-    <script>
-        const btn = document.getElementById('sidebarCollapse');
-
-        if(btn)
-        {
-            btn.addEventListener('click', function () {
-                document.getElementById('sidebar')
-                        ?.classList.toggle('toggled');
-            });
-        }
-
-        document.addEventListener("DOMContentLoaded", function() {
-            const tbElement = document.getElementById('thongBaoToast');
-            if(tbElement) new bootstrap.Toast(tbElement, { delay: 4000 }).show();
-            
-            const loiElement = document.getElementById('loiToast');
-            if(loiElement) new bootstrap.Toast(loiElement, { delay: 4000 }).show();
-        });
-    </script>
+    <script th:src="@{/user/js/thong_bao.js}"></script>
+    <script th:src="@{/user/js/chi_tiet_truyen.js}"></script>
 </body>
 </html>

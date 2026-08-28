@@ -3,43 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Đọc Truyện - Tàng Kinh Các</title>
+    <title>Đọc Truyện</title>
     
-    <!-- Bootstrap 5 -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
     
-    <!-- Select2 CSS (Thư viện làm cái ComboBox xịn xò) -->
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-    
-    <style>
-        .text-hot { color: #ff5722; font-weight: bold; }
-        .comic-page {
-            width: 100%;
-            max-width: 800px;
-            display: block;
-            margin: 0 auto;
-            border-bottom: 2px solid #000;
-        }
-        
-        .select2-container--default .select2-selection--single {
-            background-color: var(--bs-body-bg);
-            border: 1px solid #6c757d;
-            height: 38px;
-            display: flex;
-            align-items: center;
-        }
-        .select2-container--default .select2-selection--single .select2-selection__rendered {
-            color: var(--bs-body-color);
-        }
-        .select2-dropdown { background-color: var(--bs-body-bg); border: 1px solid #6c757d; }
-        .select2-results__option { color: var(--bs-body-color); }
-        .select2-container--default .select2-results__option--highlighted[aria-selected] { background-color: #ff5722; }
-        .dropdown:hover .dropdown-menu {
-            display: block;
-            margin-top: 0;
-        }
-    </style>
+    <link rel="stylesheet" th:href="@{/user/css/doc_truyen.css}">
 </head>
 <body>
 
@@ -128,22 +98,6 @@
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     
     <script th:src="@{/user/js/doi_mau.js}"></script>
-    <script>
-        $(document).ready(function() {
-            $('.select2-chuong').select2({
-                width: '100%' 
-            });
-
-            // Bắt sự kiện change cho mượt
-            $('.select2-chuong').on('change', function () {
-                let chuongId = $(this).val();
-                let baseUrl = $(this).attr('data-base-url');
-                
-                if(chuongId && baseUrl) {
-                    window.location.href = baseUrl + "/" + chuongId; 
-                }
-            });
-        });
-    </script>
+    <script th:src="@{/user/js/setup_select2.js}"></script>
 </body>
 </html>

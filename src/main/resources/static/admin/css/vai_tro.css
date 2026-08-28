@@ -1,0 +1,54 @@
+        #wrapper {
+            display: flex;
+            width: 100%;
+            overflow-x: hidden;
+        }
+
+        #sidebar {
+            min-width: 260px;
+            max-width: 260px;
+            min-height: 100vh;
+            background-color: var(--bs-tertiary-bg);
+            transition: all 0.3s;
+        }
+
+        #sidebar.toggled {
+            margin-left: -260px;
+        }
+
+        #content-wrapper {
+            width: 100%;
+            transition: all 0.3s;
+        }
+
+        .nav-link {
+            color: var(--bs-body-color);
+            padding: 15px 20px;
+            font-weight: 500;
+            transition: 0.2s;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            background-color: rgba(255, 87, 34, 0.1);
+            color: #ff5722;
+            border-left: 4px solid #ff5722;
+        }
+
+        .text-hot {
+            color: #ff5722;
+            font-weight: bold;
+        }
+
+        .table-hover tbody tr:hover {
+            background-color: rgba(255, 87, 34, 0.05);
+        }
+
+        .quyen-checkbox-box {
+            max-height: 200px;
+            overflow-y: auto;
+            border: 1px solid var(--bs-border-color);
+            border-radius: 0.375rem;
+            padding: 15px;
+            background-color: var(--bs-body-bg);
+        }

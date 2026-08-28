@@ -7,31 +7,18 @@
      <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
-    
-    <style>
-        #wrapper { display: flex; width: 100%; overflow-x: hidden; }
-        #sidebar { min-width: 260px; max-width: 260px; min-height: 100vh; background-color: var(--bs-tertiary-bg); transition: all 0.3s; }
-        #sidebar.toggled { margin-left: -260px; }
-        #content-wrapper { width: 100%; transition: all 0.3s; }
-        .nav-link { color: var(--bs-body-color); padding: 15px 20px; font-weight: 500; transition: 0.2s; }
-        .nav-link:hover, .nav-link.active { background-color: rgba(255, 87, 34, 0.1); color: #ff5722; border-left: 4px solid #ff5722; }
-        .text-hot { color: #ff5722; }
-    </style>
+    <link rel="stylesheet" th:href="@{/admin/css/chuong.css}">
 </head>
 <body>
 
     <div id="wrapper">
-        <!-- Nhúng Sidebar -->
         <div th:replace="~{fragments/admin_sidebar :: sidebar}"></div>
 
         <div id="content-wrapper">
-            <!-- Nhúng Topbar -->
             <div th:replace="~{fragments/admin_topbar :: topbar}"></div>
 
-            <!-- Nội Dung Chính -->
             <div class="container-fluid p-4">
                 
-                <!-- Thanh công cụ: Search & Nút Thêm -->
                 <div class="d-flex justify-content-between align-items-center mb-4">
                     <h3 class="fw-bold m-0"><i class="bi bi-list-ol"></i> Quản Lý Chương</h3>
                     
@@ -40,7 +27,6 @@
                             <input class="form-control" name="search" type="search" th:value="${tuKhoa}" placeholder="Tìm tên chương...">
                             <button class="btn btn-outline-info ms-2" type="submit"><i class="bi bi-search"></i></button>
                         </form>
-                        <!-- Nút Mở Modal Thêm Chương -->
                         <button sec:authorize="hasAuthority('THEM_CHUONG')" class="btn btn-danger fw-bold" data-bs-toggle="modal" data-bs-target="#modalThemChuong">
                             <i class="bi bi-plus-lg"></i> Thêm Chương
                         </button>
@@ -233,106 +219,11 @@
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-        $(document).ready(function() {
-            $('#selectTruyen').select2({
-                // BẮT BUỘC PHẢI CÓ DÒNG NÀY ĐỂ TRÁNH LỖI KHÔNG THỂ GÕ VÀO Ô SEARCH TRONG MODAL
-                dropdownParent: $('#modalThemChuong'), 
-                placeholder: "-- Gõ tên truyện để tìm --",
-                width: '100%', // Cho nó bung rộng bằng ô input của Bootstrap
-                language: {
-                    noResults: function () {
-                        return "Không tìm thấy bộ truyện này!";
-                    }
-                }
-            });
-        });
-    </script>
-    <script>
-        document.getElementById('sidebarCollapse').addEventListener('click', function () {
-            document.getElementById('sidebar').classList.toggle('toggled');
-        });
 
-        // Bật Toast
-        document.addEventListener("DOMContentLoaded", function() {
-            const tbElement = document.getElementById('thongBaoToast');
-            if(tbElement) new bootstrap.Toast(tbElement, { delay: 4000 }).show();
-            
-            const loiElement = document.getElementById('loiToast');
-            if(loiElement) new bootstrap.Toast(loiElement, { delay: 4000 }).show();
-        });
-    </script>
-    
     <script th:src="@{/user/js/doi_mau.js}"></script>
-
-    <!-- SCRIPT XỬ LÝ UPLOAD NHIỀU ẢNH CHƯƠNG -->
-    <script>
-        let selectedFiles = []; 
-
-        document.getElementById('inputAnhChuong').addEventListener('change', function(e) {
-            let newFiles = Array.from(e.target.files);
-            selectedFiles = selectedFiles.concat(newFiles);
-
-            // Sắp xếp tự nhiên (1, 2, 3... 10)
-            selectedFiles.sort((a, b) => {
-                return a.name.localeCompare(b.name, undefined, {numeric: true, sensitivity: 'base'});
-            });
-
-            renderPreviews();
-        });
-
-        function renderPreviews() {
-            const previewContainer = document.getElementById('previewContainer');
-            const fileInput = document.getElementById('inputAnhChuong');
-            
-            previewContainer.innerHTML = ''; 
-            
-            if(selectedFiles.length === 0) {
-                previewContainer.innerHTML = '<p class="text-muted w-100 text-center m-0 align-self-center">Chưa có trang truyện nào được chọn.</p>';
-                fileInput.value = ''; 
-                return;
-            }
-
-            const dataTransfer = new DataTransfer(); 
-
-            selectedFiles.forEach((file, index) => {
-                dataTransfer.items.add(file); 
-
-                const div = document.createElement('div');
-                div.className = 'position-relative';
-                div.style.width = '120px';
-
-                const img = document.createElement('img');
-                img.src = URL.createObjectURL(file);
-                img.className = 'img-thumbnail';
-                img.style.width = '100%';
-                img.style.height = '160px';
-                img.style.objectFit = 'cover';
-
-                const badge = document.createElement('span');
-                badge.className = 'badge bg-primary position-absolute top-0 start-0 m-1';
-                badge.innerText = `Trang ${index + 1}`;
-
-                const btnDelete = document.createElement('button');
-                btnDelete.className = 'btn btn-sm btn-danger position-absolute top-0 end-0 m-1 p-0';
-                btnDelete.style.width = '24px';
-                btnDelete.style.height = '24px';
-                btnDelete.innerHTML = '<i class="bi bi-x"></i>';
-                btnDelete.type = 'button';
-                
-                btnDelete.onclick = function() {
-                    selectedFiles.splice(index, 1); 
-                    renderPreviews(); 
-                };
-
-                div.appendChild(img);
-                div.appendChild(badge);
-                div.appendChild(btnDelete);
-                previewContainer.appendChild(div);
-            });
-
-            fileInput.files = dataTransfer.files; 
-        }
-    </script>
+    
+    <script th:src="@{/admin/js/chuong.js}"></script>
+    <script th:src="@{/admin/js/thong_bao.js}"></script>
+    <script th:src="@{/admin/js/setup_select2_chuong.js}"></script>
 </body>
 </html>

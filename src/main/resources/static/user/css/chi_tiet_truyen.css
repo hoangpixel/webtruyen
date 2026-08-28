@@ -1,0 +1,30 @@
+    .bia-truyen { 
+        width: 100%; 
+        max-width: 220px;
+        border-radius: 10px; 
+        box-shadow: 0 4px 15px rgba(0,0,0,0.5); 
+        display: block;
+        margin: 0 auto;
+        object-fit: cover;
+        aspect-ratio: 2/3;
+        }
+    .text-hot { color: #ff5722; font-weight: bold; }
+    .chuong-list { max-height: 400px; overflow-y: auto; }
+    .chuong-item { text-decoration: none; color: inherit; padding: 10px; display: block; border-bottom: 1px solid rgba(255,255,255,0.1); transition: 0.2s; }
+    .chuong-item:hover { background-color: rgba(255, 87, 34, 0.1); color: #ff5722; padding-left: 15px; }
+    .dropdown:hover .dropdown-menu {
+        display: block;
+        margin-top: 0;
+        }
+    .rating-stars {
+    font-size: 2rem;
+    color: #ccc;
+    cursor: pointer;
+    }
+    .rating-stars .star {
+    transition: color 0.2s ease-in-out;
+    }
+    .rating-stars .star.active,
+    .rating-stars .star:hover,
+    .rating-stars .star:hover ~ .star {
+    }

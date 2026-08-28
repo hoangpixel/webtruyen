@@ -1,10 +1,9 @@
-document.addEventListener("DOMContentLoaded", function() {
+document.addEventListener("DOMContentLoaded", function () {
     const btnToggle = document.getElementById('btn-theme-toggle');
     const iconTheme = document.getElementById('icon-theme');
     const htmlTag = document.documentElement;
-    
-    // Kiểm tra xem trang có nút đổi màu không (vì có thể có trang không xài)
-    if(btnToggle && iconTheme) {
+
+    if (btnToggle && iconTheme) {
         const savedTheme = localStorage.getItem('webtruyen-theme') || 'dark';
         applyTheme(savedTheme);
 
