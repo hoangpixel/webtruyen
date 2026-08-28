@@ -18,3 +18,18 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     });
 });
+
+document.addEventListener("DOMContentLoaded", function() {
+            const btnToggle = document.getElementById('sidebarCollapse');
+            const sidebar = document.getElementById('sidebar');
+            
+            // Check null cẩn thận để không bị sập script của cả trang
+            if (btnToggle && sidebar) {
+                btnToggle.addEventListener('click', function (e) {
+                    e.preventDefault(); // Ngăn trình duyệt nhảy lên đầu trang nếu nút là thẻ <a>
+                    sidebar.classList.toggle('toggled');
+                });
+            } else {
+                console.warn("Lưu ý: Không tìm thấy ID 'sidebarCollapse' hoặc 'sidebar' trên trang này!");
+            }
+        });
