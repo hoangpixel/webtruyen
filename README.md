@@ -37,6 +37,7 @@ webtruyen/
 │   ├── main/
 │   │   ├── java/com/flogin/webtruyen/
 │   │   │   ├── controller/
+│   │   │   ├── database/
 │   │   │   ├── model/
 │   │   │   ├── repository/
 │   │   │   ├── service/
